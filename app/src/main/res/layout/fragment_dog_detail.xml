@@ -1,0 +1,55 @@
+<!-- res/layout/dog_detail_layout.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".Fragments.DogDetailFragment"
+
+    >
+
+    <ImageView
+        android:id="@+id/dogImage"
+        android:layout_width="match_parent"
+        android:layout_height="291dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/dog" />
+
+    <TextView
+        android:id="@+id/nameDog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="20dp"
+        android:layout_marginTop="5dp"
+        android:text="Dog Name"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/breedDog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Breed: Labrador"
+        android:textSize="16sp"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/ageDog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Age: 3 years"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/sexDog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Age: 3 years"
+        android:textSize="16sp" />
+
+    <!-- Add more TextViews or other views to display additional information -->
+
+</LinearLayout>

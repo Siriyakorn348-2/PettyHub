@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="141dp"
+        android:layout_height="52dp"
+        android:text="Next"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.758" />
+
+    <TextView
+        android:id="@+id/questionText"
+        android:layout_width="239dp"
+        android:layout_height="54dp"
+        android:text="คุณมีสุนัขหรือไม่?"
+        android:textColor="#8B4513"
+        android:textSize="30sp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="86dp"
+        tools:layout_editor_absoluteY="303dp" />
+
+    <RadioButton
+        android:id="@+id/radioNo"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:buttonTint="#D2B48C"
+        android:fontFamily="sans-serif-light"
+        android:text="ไม่มี"
+        android:textColor="#8B4513"
+        android:textSize="18sp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="206dp"
+        tools:layout_editor_absoluteY="382dp" />
+
+    <RadioButton
+        android:id="@+id/radioYes"
+        android:layout_width="67dp"
+        android:layout_height="41dp"
+        android:buttonTint="#D2B48C"
+        android:text="มี"
+        android:textColor="#8B4513"
+        android:textSize="18sp"
+        tools:layout_editor_absoluteX="115dp"
+        tools:layout_editor_absoluteY="381dp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="305dp"
+        android:layout_height="198dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.115"
+        app:srcCompat="@drawable/hiii" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

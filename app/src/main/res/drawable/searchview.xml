@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/rounded_text_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:shape="rectangle"
+    tools:ignore="ExtraText">
+    <solid android:color="@android:color/white" /> <!-- สีพื้นหลัง -->
+    <stroke
+        android:width="2dp" />
+    android:color="#886B59" /> <!-- สีของเส้นกรอบ -->
+    <corners android:radius="20dp" /> <!-- รัศมีมุมขอบ -->
+</shape>

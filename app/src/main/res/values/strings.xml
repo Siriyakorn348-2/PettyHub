@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">My Dog</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="open_nave">Open Navigation Drawer</string>
+    <string name="clos_nave">Clos Navigation Drawer</string>
+
+    <string name="add_youDog">Add Your Dog</string>
+    <string name="ella_txt">Ella</string>
+    <string name="follow_txt">Follow</string>
+
+</resources>

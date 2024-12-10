@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/image_with_border.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- กรอบของรูปภาพ -->
+    <item>
+        <shape android:shape="oval">
+            <!-- สีพื้นหลัง -->
+            <solid android:color="@android:color/white" />
+" />
+            <!-- สีขอบ -->
+
+        </shape>
+    </item>
+    <!-- รูปภาพ -->
+    <item android:drawable="@drawable/dog_training"
+        android:top="70dp"
+        android:bottom="70dp"
+        android:left="70dp"
+        android:right="70dp"/>
+</layer-list>
