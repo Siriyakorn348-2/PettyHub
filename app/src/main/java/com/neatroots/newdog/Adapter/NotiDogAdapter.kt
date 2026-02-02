@@ -25,11 +25,10 @@ class NotiDogAdapter(private val notificationList: List<NotiDog>) :
         val notification = notificationList[position]
         holder.messageTextView.text = notification.message
 
-        // แสดงวันที่และเวลาในรูปแบบที่ต้องการ
         holder.timestampTextView.text = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
             .format(Date(notification.timestamp))
 
-        // เพิ่มการจัดการคลิก
+
         holder.itemView.setOnClickListener {
             val dateFormat = SimpleDateFormat("yyyy-M-d", Locale.getDefault())
             val dateString = dateFormat.format(Date(notification.timestamp))

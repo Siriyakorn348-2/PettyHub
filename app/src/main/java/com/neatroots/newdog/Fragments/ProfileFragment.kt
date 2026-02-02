@@ -70,7 +70,7 @@ class ProfileFragment : Fragment() {
         firebaseAuth = FirebaseAuth.getInstance()
         profileId = arguments?.getString("profileId") ?: getProfileIdFromPrefs()
 
-        // Initialize views
+
         profileFragmentUsername = view.findViewById(R.id.profile_fragment_user)
         totalFollow = view.findViewById(R.id.total_follow)
         totalFollowing = view.findViewById(R.id.total_following)
@@ -82,7 +82,7 @@ class ProfileFragment : Fragment() {
         menuButton = view.findViewById(R.id.menu_button)
         backButton = view.findViewById(R.id.back_button_profile)
 
-        // Navigation Drawer
+
         val drawerLayout: androidx.drawerlayout.widget.DrawerLayout = view.findViewById(R.id.drawer_layout)
         val navView: NavigationView = view.findViewById(R.id.nav_view)
 
@@ -91,27 +91,21 @@ class ProfileFragment : Fragment() {
         val navHeaderUsername: TextView = headerView.findViewById(R.id.nav_header_username)
         val navHeaderEmail: TextView = headerView.findViewById(R.id.nav_header_email)
 
-        // ซ่อน menuButton ถ้าไม่ใช่โปรไฟล์ของตัวเอง
+
         menuButton.visibility = if (profileId == firebaseAuth.currentUser?.uid) View.VISIBLE else View.GONE
 
-        // ตรวจสอบว่าเป็นโปรไฟล์ของตัวเองหรือไม่
         if (profileId == firebaseAuth.currentUser?.uid) {
-            // ถ้าเป็นโปรไฟล์ของตัวเอง ซ่อนปุ่มกลับ
+
             backButton.visibility = View.GONE
-            profileFragmentUsername.setPadding(15, 0, 0, 0) // ปรับ padding ชื่อให้ชิดซ้ายเมื่อไม่มีปุ่ม
+            profileFragmentUsername.setPadding(15, 0, 0, 0)
         } else {
-            // ถ้าเป็นโปรไฟล์ของคนอื่น แสดงปุ่มกลับ
             backButton.visibility = View.VISIBLE
             backButton.setOnClickListener {
-                // ตรวจสอบว่า fragment นี้อยู่ใน back stack หรือไม่
                 if (activity is ShowUsersActivity) {
-                    // เรียก onBackPressed() ของ ShowUsersActivity เพื่อจัดการการย้อนกลับ
                     requireActivity().onBackPressed()
                 } else if (parentFragmentManager.backStackEntryCount > 0) {
-                    // ถ้ามี fragment ใน back stack ให้ย้อนกลับไป fragment ก่อนหน้า
                     parentFragmentManager.popBackStack()
                 } else {
-                    // ถ้าไม่มี fragment ใน back stack ให้ปิด activity
                     requireActivity().finish()
                 }
             }
@@ -201,7 +195,6 @@ class ProfileFragment : Fragment() {
         proDit.text = if (profileId == firebaseAuth.currentUser?.uid) "แก้ไขโปรไฟล์" else ""
         if (profileId != firebaseAuth.currentUser?.uid) checkFollowAndFollowingButtonStatus()
 
-        // ดึงข้อมูลผู้ใช้และอัปเดตทั้งหน้าโปรไฟล์และ nav_header
         userInfo(profileId, navHeaderProfileImage, navHeaderUsername, navHeaderEmail)
         getFollowers()
         getFollowing()
@@ -374,7 +367,6 @@ class ProfileFragment : Fragment() {
                         proName.text = user.getUsername()
                         proEmail.text = user.getEmail()
 
-                        // อัปเดต nav_header
                         Picasso.get().load(user.getImage()).placeholder(R.drawable.user).into(navImage)
                         navUsername.text = user.getUsername()
                         navEmail.text = user.getEmail()

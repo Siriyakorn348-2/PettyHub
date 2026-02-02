@@ -58,7 +58,6 @@ class ChangePasswordActivity : AppCompatActivity() {
         val newPassword = newPasswordInput.text.toString().trim()
         val confirmPassword = confirmPasswordInput.text.toString().trim()
 
-        // ตรวจสอบว่าฟิลด์ว่างหรือไม่
         when {
             TextUtils.isEmpty(currentPassword) -> {
                 Toast.makeText(this, "กรุณากรอกรหัสผ่านปัจจุบัน", Toast.LENGTH_LONG).show()
@@ -82,7 +81,6 @@ class ChangePasswordActivity : AppCompatActivity() {
             }
         }
 
-        // แสดง ProgressDialog
         val progressDialog = ProgressDialog(this).apply {
             setTitle("เปลี่ยนรหัสผ่าน")
             setMessage("กรุณารอสักครู่ กำลังอัปเดตรหัสผ่าน...")
@@ -90,7 +88,6 @@ class ChangePasswordActivity : AppCompatActivity() {
             show()
         }
 
-        // ตรวจสอบรหัสผ่านปัจจุบันและอัปเดตรหัสผ่านใหม่
         val credential = EmailAuthProvider.getCredential(firebaseUser.email!!, currentPassword)
         firebaseUser.reauthenticate(credential).addOnCompleteListener { reauthTask ->
             if (reauthTask.isSuccessful) {
@@ -98,7 +95,7 @@ class ChangePasswordActivity : AppCompatActivity() {
                     progressDialog.dismiss()
                     if (updateTask.isSuccessful) {
                         Toast.makeText(this, "อัปเดตรหัสผ่านสำเร็จ", Toast.LENGTH_LONG).show()
-                        // กลับไปที่ MainActivity และไปที่ ProfileFragment
+
                         val intent = Intent(this, MainActivity::class.java).apply {
                             putExtra("selectedNavItemId", R.id.nav_profile)
                             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP

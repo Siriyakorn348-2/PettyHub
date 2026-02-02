@@ -43,10 +43,10 @@ class HomeFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
 
-        // ตั้งค่าปุ่มแจ้งเตือน
+
         val notiBtn: View = view.findViewById(R.id.noti_fragment_home)
         notiBtn.setOnClickListener {
-            clearNotificationBadge() // ล้างสถานะแจ้งเตือนก่อนไปหน้าใหม่
+            clearNotificationBadge()
             val fragment = NotificationsFragment()
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_container, fragment)
@@ -54,7 +54,7 @@ class HomeFragment : Fragment() {
             transaction.commit()
         }
 
-        // ตั้งค่าปุ่มค้นหา
+
         val search: View = view.findViewById(R.id.search_fragment_home)
         search.setOnClickListener {
             val fragment = SearchFragment()
@@ -64,14 +64,14 @@ class HomeFragment : Fragment() {
             transaction.commit()
         }
 
-        // ตั้งค่าปุ่มเพิ่มโพสต์
+
         val addPost: FloatingActionButton = view.findViewById(R.id.addPost)
         addPost.setOnClickListener {
             val intent = Intent(requireContext(), AddPostActivity::class.java)
             startActivity(intent)
         }
 
-        // ตั้งค่า TabLayout และ ViewPager2
+
         val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
         val viewPager = view.findViewById<ViewPager2>(R.id.view_pager)
 
@@ -87,7 +87,7 @@ class HomeFragment : Fragment() {
             }
         }.attach()
 
-        // โหลดจำนวนแจ้งเตือน
+
         retrieveNotifications(notiBtn as android.widget.ImageView)
 
         return view

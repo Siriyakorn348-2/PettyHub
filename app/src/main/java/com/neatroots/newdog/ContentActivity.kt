@@ -17,14 +17,14 @@ class ContentActivity : AppCompatActivity() {
         binding = ActivityContentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // แสดงข้อมูลหลัก
+
         Glide.with(this).load(intent.getStringExtra("img")).into(binding.itemImage)
         binding.title.text = intent.getStringExtra("title")
         binding.desText.text = intent.getStringExtra("des")
         binding.dogAge.text = intent.getStringExtra("age")
         binding.dogBreed.text = intent.getStringExtra("breed")
 
-        // ตั้งค่า Database
+
         val db = Room.databaseBuilder(this, AppDatabase::class.java, "db_name")
             .allowMainThreadQueries()
             .fallbackToDestructiveMigration()
@@ -33,12 +33,12 @@ class ContentActivity : AppCompatActivity() {
 
         val daoObject = db.getDao()
 
-        // ดึงข้อมูลสำหรับรายการแนะนำ
+
         val currentBreed = intent.getStringExtra("breed") ?: ""
         val allData = daoObject.getAll()
         recommendedList = ArrayList()
 
-        // กรองข้อมูลที่มีพันธุ์เดียวกัน (ยกเว้นรายการปัจจุบัน)
+
         val currentTitle = intent.getStringExtra("title")
         allData.forEach { dog ->
             if (dog?.breed == currentBreed && dog.title != currentTitle) {
@@ -46,7 +46,7 @@ class ContentActivity : AppCompatActivity() {
             }
         }
 
-        // ตั้งค่า RecyclerView สำหรับรายการแนะนำ
+
         setupRecommendedRecyclerView()
 
         binding.backBtn.setOnClickListener {
@@ -63,7 +63,7 @@ class ContentActivity : AppCompatActivity() {
         recommendedAdapter = SearchDataAdapter(recommendedList, this)
         binding.recommendedRecyclerView.adapter = recommendedAdapter
 
-        // ซ่อน RecyclerView ถ้าไม่มีรายการแนะนำ
+
         if (recommendedList.isEmpty()) {
             binding.recommendedTitle.visibility = android.view.View.GONE
             binding.recommendedRecyclerView.visibility = android.view.View.GONE

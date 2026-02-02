@@ -1,4 +1,4 @@
-package com.neatroots.newdog // ปรับ package ตามโปรเจคของคุณ
+package com.neatroots.newdog
 
 import android.content.Intent
 import android.os.Bundle

@@ -60,12 +60,10 @@ class AddDogActivity : AppCompatActivity() {
             setCancelable(false)
         }
 
-        // Setup gender dropdown
         val sexOptions = arrayOf("เพศผู้", "เพศเมีย")
         val sexAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sexOptions)
         sexDog.setAdapter(sexAdapter)
 
-        // Setup breed dropdown
         val breedOptions = arrayOf(
             "อลาสกัน มาลามิวท์", "คอลลี่", "ไซบีเรียน ฮัสกี้", "ชามอย", "อัลเซเชี่ยล",
             "ดัลเมเชี่ยน", "อเมริกัน พิทบูล เทอร์เรีย", "โกลเด้น รีทรีฟเวอร์", "อเมริกัน บลูด็อก",
@@ -74,7 +72,6 @@ class AddDogActivity : AppCompatActivity() {
         val breedAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, breedOptions)
         breedDog.setAdapter(breedAdapter)
 
-        // Setup DatePicker for birth date
         dogBirthDate.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
@@ -94,11 +91,10 @@ class AddDogActivity : AppCompatActivity() {
                 month,
                 day
             )
-            datePickerDialog.datePicker.maxDate = System.currentTimeMillis() // จำกัดไม่ให้เลือกวันในอนาคต
+            datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
             datePickerDialog.show()
         }
 
-        // Button listeners
         addImageDog.setOnClickListener {
             val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             galleryIntent.type = "image/*"
@@ -208,7 +204,7 @@ class AddDogActivity : AppCompatActivity() {
         val dogsRef = FirebaseDatabase.getInstance().reference.child("Dogs")
         val dogId = dogsRef.push().key ?: return
 
-        val dogAge = calculateAge(selectedBirthDate) // คำนวณอายุ
+        val dogAge = calculateAge(selectedBirthDate)
         val dog = Dog(
             dogId = dogId,
             dogName = nameDog.text.toString().trim(),
@@ -219,7 +215,6 @@ class AddDogActivity : AppCompatActivity() {
             userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
         )
 
-        // บันทึกข้อมูลทั้งหมดรวมถึง dogBirthDate ในคราวเดียว
         val dogData = hashMapOf<String, Any>(
             "dogId" to dogId,
             "dogName" to dog.getDogName(),

@@ -16,23 +16,23 @@ class DecisionTreeActivity : AppCompatActivity() {
         binding = ActivityDecisionTreeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Create Decision Tree and set initial value
+
         tree = DecisionTree().createTree()
         currentNode = tree
         initializeQuestionView(tree)
     }
 
     private fun initializeQuestionView(node: DecisionNode?) {
-        // Check if node is null or has no question
+
         if (node == null || node.question == null) {
-            initializeResultView(node ?: DecisionNode()) // Pass empty node as fallback
+            initializeResultView(node ?: DecisionNode())
             return
         }
 
-        // Set question in UI
+
         binding.questionTextView.text = node.question
 
-        // Set Listener for Yes button
+
         binding.yesButton.setOnClickListener {
             it.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).withEndAction {
                 it.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start()
@@ -40,7 +40,7 @@ class DecisionTreeActivity : AppCompatActivity() {
             }.start()
         }
 
-        // Set Listener for No button
+
         binding.noButton.setOnClickListener {
             it.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).withEndAction {
                 it.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start()
@@ -50,16 +50,16 @@ class DecisionTreeActivity : AppCompatActivity() {
     }
 
     private fun moveToNextNode(answer: Boolean) {
-        // If currentNode is null, finish the activity
+
         val node = currentNode ?: run {
             finish()
             return
         }
 
-        // Select next node based on answer
+
         currentNode = if (answer) node.yesNode else node.noNode
 
-        // Handle next node
+
         when {
             currentNode != null -> initializeQuestionView(currentNode)
             else -> initializeResultView(node)

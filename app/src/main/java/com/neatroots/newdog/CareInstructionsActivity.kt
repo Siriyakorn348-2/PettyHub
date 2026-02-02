@@ -26,20 +26,17 @@ class CareInstructionsActivity : AppCompatActivity() {
         binding = ActivityCareInstructionsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // รับข้อมูลจาก Intent
         val diagnosis = intent.getStringExtra("DIAGNOSIS") ?: ""
         val careInstructions = intent.getStringExtra("CARE_INSTRUCTIONS")
         val symptomsAndCauses = intent.getStringExtra("SYMPTOMS_AND_CAUSES")
 
         Log.d("CareInstructions", "Diagnosis received: $diagnosis")
 
-        // ตั้งค่า UI พื้นฐาน
         binding.back.setOnClickListener { finish() }
         binding.diagnosisTextView.text = "โรค: ${diagnosis.ifEmpty { "ไม่ทราบอาการ" }}"
         binding.symptomsAndCausesTextView.text = symptomsAndCauses ?: "ไม่มีข้อมูลสาเหตุและอาการ"
         binding.careInstructionsTextView.text = careInstructions ?: "ไม่มีคำแนะนำเพิ่มเติม"
 
-        // ตั้งค่ารูปภาพหลักตามโรค (ใช้ Resource ID)
         when (diagnosis) {
             "ไข้หัดสุนัข" -> binding.diagnosisImage.setImageResource(R.drawable.distemper_image)
             "ลำไส้อักเสบติดต่อจากเชื้อพาโรไวรัส" -> binding.diagnosisImage.setImageResource(R.drawable.parvo_image)
@@ -49,13 +46,11 @@ class CareInstructionsActivity : AppCompatActivity() {
             else -> binding.diagnosisImage.setImageResource(R.drawable.placeholder_image)
         }
 
-        // ตั้งค่า Room Database
         db = Room.databaseBuilder(this, AppDatabase::class.java, "datadog.db")
             .fallbackToDestructiveMigration()
             .createFromAsset("datadog.db")
             .build()
 
-        // ดึงข้อมูลเนื้อหาที่เกี่ยวข้อง
         relatedContentList = ArrayList()
         fetchRelatedContent(diagnosis)
     }
@@ -66,14 +61,13 @@ class CareInstructionsActivity : AppCompatActivity() {
             val allData = dao.getAll()
 
             Log.d("CareInstructions", "Total data count: ${allData.size}")
-            relatedContentList.clear() // ล้างข้อมูลเก่าก่อน
+            relatedContentList.clear()
 
-            // กรองข้อมูลที่เกี่ยวข้องกับโรคหรือการดูแล
             allData.forEach { dog ->
                 if (dog != null) {
                     val title = dog.title ?: ""
                     val description = dog.des ?: ""
-                    // ตรวจสอบว่า title หรือ description มีคำที่เกี่ยวข้องกับ diagnosis หรือการดูแล
+
                     if (title.contains(diagnosis, ignoreCase = true) ||
                         description.contains(diagnosis, ignoreCase = true) ||
                         title.contains("การดูแล", ignoreCase = true) ||
@@ -89,7 +83,6 @@ class CareInstructionsActivity : AppCompatActivity() {
 
             Log.d("CareInstructions", "Filtered related count: ${relatedContentList.size}")
 
-            // ถ้าไม่มีข้อมูลที่เกี่ยวข้องเลย แสดงข้อความแจ้งเตือนใน UI แทนการสุ่ม
             runOnUiThread {
                 if (relatedContentList.isEmpty()) {
                     binding.relatedContentTitle.text = "ไม่มีข้อมูลการดูแลที่เกี่ยวข้อง"
@@ -110,7 +103,6 @@ class CareInstructionsActivity : AppCompatActivity() {
             false
         )
         relatedContentAdapter = RelatedContentAdapter(this, relatedContentList) { relatedContent ->
-            // เมื่อคลิกการ์ด เปิด ContentActivity
             val intent = Intent(this, ContentActivity::class.java).apply {
                 putExtra("title", relatedContent.dogData.title)
                 putExtra("des", relatedContent.dogData.des)
@@ -139,10 +131,8 @@ class CareInstructionsActivity : AppCompatActivity() {
     }
 }
 
-// ปรับ Data class ให้เก็บ DogData ทั้งหมด
 data class RelatedContent(val dogData: DogData)
 
-// ปรับ Adapter ให้ใช้ Glide และรับ Context
 class RelatedContentAdapter(
     private val context: Context,
     private val items: List<RelatedContent>,
@@ -158,7 +148,6 @@ class RelatedContentAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.title.text = item.dogData.title
-        // ใช้ Glide โหลดรูปภาพจาก img (String) ใน DogData
         Glide.with(context)
             .load(item.dogData.img)
             .placeholder(R.drawable.placeholder_image)

@@ -108,7 +108,7 @@ class SignUpActivity : AppCompatActivity() {
         userRef.setValue(userMap)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // เพิ่มข้อมูล Following
+
                     FirebaseDatabase.getInstance().reference
                         .child("Follow").child(currentUserID)
                         .child("Following").child(currentUserID)

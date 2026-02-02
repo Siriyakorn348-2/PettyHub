@@ -31,7 +31,7 @@ class FollowingTabFragment : Fragment() {
 
         val recyclerView: RecyclerView = view.findViewById(R.id.following_recycler)
         recyclerView.apply {
-            setHasFixedSize(true) // ปรับปรุง performance
+            setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
             postAdapter = context?.let { PostAdapter(it, postList) }
             adapter = postAdapter
@@ -44,7 +44,7 @@ class FollowingTabFragment : Fragment() {
 
     private fun checkFollowing() {
         val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser == null) return // ออกถ้าไม่มีผู้ใช้ล็อกอิน
+        if (currentUser == null) return
 
         val followingRef = FirebaseDatabase.getInstance().reference
             .child("Follow")

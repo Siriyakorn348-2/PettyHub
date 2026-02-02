@@ -33,7 +33,7 @@ class DogInfoFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_dog_info, container, false)
 
-        // ดึง TextView สำหรับข้อมูล (ไม่มีคำนำหน้าในส่วนนี้แล้ว)
+
         val nameText: TextView = view.findViewById(R.id.dogNameText)
         val breedText: TextView = view.findViewById(R.id.dogBreedText)
         val colorText: TextView = view.findViewById(R.id.dogColorText)
@@ -45,7 +45,7 @@ class DogInfoFragment : Fragment() {
         val groupText: TextView = view.findViewById(R.id.dogGroupText)
         val neuteredText: TextView = view.findViewById(R.id.dogNeuteredText)
 
-        // ดึงข้อมูลจาก Firebase แบบเรียลไทม์
+
         val dogsRef = FirebaseDatabase.getInstance().reference.child("Dogs").child(dogId)
         valueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

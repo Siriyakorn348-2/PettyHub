@@ -53,12 +53,11 @@ class PublicTabFragment : Fragment() {
                             post?.let { postList.add(it) }
                         } catch (e: Exception) {
                             Log.e("PublicTabFragment", "Error deserializing post: ${e.message}")
-                            // กรณี postimage เป็น String เดียว (ข้อมูลเก่า)
                             val postMap = snapshot.value as? Map<String, Any>
                             if (postMap != null) {
                                 val postimage = postMap["postimage"]
                                 val correctedPostimage = when (postimage) {
-                                    is String -> listOf(postimage) // แปลง String เป็น List
+                                    is String -> listOf(postimage)
                                     is List<*> -> postimage as List<String>
                                     else -> null
                                 }

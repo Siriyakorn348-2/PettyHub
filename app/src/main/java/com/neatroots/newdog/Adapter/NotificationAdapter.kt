@@ -38,7 +38,6 @@ class NotificationAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val notification = mNotification[position]
 
-        // ตรวจสอบว่าการแจ้งเตือนมาจากผู้ใช้คนอื่น
         if (notification.getUserId() == currentUserId && notification.getText() == "liked your post ") {
             holder.itemView.visibility = View.GONE
             holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
@@ -51,7 +50,6 @@ class NotificationAdapter(
             )
         }
 
-        // ตั้งค่าข้อความแจ้งเตือน
         holder.text.text = when {
             notification.getText() == "started following you" -> "started following you"
             notification.getText() == "liked your post " -> "liked your post"
@@ -59,21 +57,17 @@ class NotificationAdapter(
             else -> notification.getText()
         }
 
-        // ตั้งค่าเวลา - ลบการเช็ค > 0 ออก และเพิ่มการรับประกันค่า default
         holder.timestamp.text = notification.getTimeAgo()
 
-        // เพิ่ม log เพื่อ debug
         Log.d("NotificationAdapter", "Text: ${notification.getText()}, Timestamp: ${notification.getTimestamp()}, TimeAgo: ${notification.getTimeAgo()}")
 
         userInfo(holder.profileImage, holder.userName, notification.getUserId())
 
-        // ตรวจสอบว่าเป็นโพสต์หรือไม่
         holder.postImage.visibility = if (notification.isIspost() && !notification.getPostId().isNullOrEmpty()) {
             getPostImage(holder.postImage, notification.getPostId())
             View.VISIBLE
         } else View.GONE
 
-        // การคลิกที่รายการแจ้งเตือน
         holder.itemView.setOnClickListener {
             val editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
             if (notification.isIspost()) {

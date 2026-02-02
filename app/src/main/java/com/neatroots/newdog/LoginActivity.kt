@@ -35,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
         forgetPass = findViewById(R.id.forgetpass)
         rememberMeCheckBox = findViewById(R.id.rememberMeCheckBox)
 
-        // โหลดสถานะ "จดจำฉัน" จาก SharedPreferences
+
         val prefs = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)
         val isRemembered = prefs.getBoolean("rememberMe", false)
         if (isRemembered) {

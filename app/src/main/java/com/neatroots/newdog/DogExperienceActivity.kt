@@ -17,14 +17,14 @@ class DogExperienceActivity : AppCompatActivity() {
         binding = ActivityDogExperienceBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // ปุ่ม "เคยเลี้ยง" - ไปหน้าแรก
+
         binding.btnYes.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        // ปุ่ม "ไม่เคยเลี้ยง" - ไปหน้าคำแนะนำ
+
         binding.btnNo.setOnClickListener {
             val intent = Intent(this, NewOwnerActivity::class.java)
             startActivity(intent)

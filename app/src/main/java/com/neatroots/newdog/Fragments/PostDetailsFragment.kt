@@ -33,7 +33,7 @@ class PostDetailsFragment : Fragment() {
         val preferences = context?.getSharedPreferences("PREFS", Context.MODE_PRIVATE)
         postId = preferences?.getString("postId", "none").toString()
 
-        // ตั้งค่า RecyclerView
+
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_post_detail)
         recyclerView.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(context)
@@ -53,12 +53,12 @@ class PostDetailsFragment : Fragment() {
             .child("Posts")
             .child(postId)
 
-        // ใช้ addListenerForSingleValueEvent แทน orderByChild
+
         postsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 postList?.clear()
 
-                // ดึงโพสต์จาก Firebase
+
                 val post = dataSnapshot.getValue(Post::class.java)
 
                 post?.let {
@@ -73,7 +73,7 @@ class PostDetailsFragment : Fragment() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // ทำบางอย่างหากเกิดข้อผิดพลาดในการดึงข้อมูล
+
             }
         })
     }

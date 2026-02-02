@@ -46,19 +46,19 @@ class MedicalRecordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // อ้างอิง RecyclerView
+
         vaccineRecyclerView = view.findViewById(R.id.vaccineRecyclerView)
         chronicRecyclerView = view.findViewById(R.id.chronicRecyclerView)
         allergyRecyclerView = view.findViewById(R.id.allergyRecyclerView)
         foodAllergyRecyclerView = view.findViewById(R.id.foodAllergyRecyclerView)
 
-        // ตั้งค่า RecyclerView และ Adapter
+
         setupRecyclerView(vaccineRecyclerView, "vaccines").also { vaccineAdapter = it }
         setupRecyclerView(chronicRecyclerView, "chronicDiseases").also { chronicAdapter = it }
         setupRecyclerView(allergyRecyclerView, "drugAllergies").also { allergyAdapter = it }
         setupRecyclerView(foodAllergyRecyclerView, "foodAllergies").also { foodAllergyAdapter = it }
 
-        // ตั้งค่า Listener ปุ่มเพิ่มข้อมูล
+
         view.findViewById<Button>(R.id.addVaccineButton).setOnClickListener {
             showAddDialog("ประวัติการฉีดวัคซีน", "vaccines", vaccineAdapter)
         }
@@ -76,12 +76,12 @@ class MedicalRecordFragment : Fragment() {
     private fun setupRecyclerView(recyclerView: RecyclerView, path: String): MedicalRecordAdapter {
         recyclerView.layoutManager = LinearLayoutManager(context)
         val adapter = MedicalRecordAdapter(mutableListOf(), database.child(path)) { key ->
-            // ฟังก์ชันลบข้อมูลเมื่อกดปุ่ม Delete
+
             database.child(path).child(key).removeValue()
         }
         recyclerView.adapter = adapter
 
-        // ดึงข้อมูลจาก Firebase แบบเรียลไทม์
+
         database.child(path).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val items = mutableListOf<Pair<String, String>>() // Pair(key, value)
@@ -95,7 +95,7 @@ class MedicalRecordFragment : Fragment() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // จัดการกรณีเกิดข้อผิดพลาด
+
             }
         })
         return adapter
@@ -111,8 +111,8 @@ class MedicalRecordFragment : Fragment() {
             .setPositiveButton("บันทึก") { _, _ ->
                 val input = editText.text.toString().trim()
                 if (input.isNotEmpty()) {
-                    val newRef = database.child(path).push() // สร้าง key ใหม่
-                    newRef.setValue(input) // บันทึกข้อมูลลง Firebase
+                    val newRef = database.child(path).push()
+                    newRef.setValue(input)
                 }
             }
             .setNegativeButton("ยกเลิก", null)
@@ -130,11 +130,11 @@ class MedicalRecordFragment : Fragment() {
     }
 }
 
-// Adapter สำหรับ RecyclerView
+
 class MedicalRecordAdapter(
-    private val items: MutableList<Pair<String, String>>, // เก็บ key และ value
-    private val dbRef: DatabaseReference, // อ้างอิง Firebase
-    private val onDelete: (String) -> Unit // ฟังก์ชันสำหรับลบ
+    private val items: MutableList<Pair<String, String>>,
+    private val dbRef: DatabaseReference,
+    private val onDelete: (String) -> Unit
 ) : RecyclerView.Adapter<MedicalRecordAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -152,12 +152,12 @@ class MedicalRecordAdapter(
         val (key, value) = items[position]
         holder.textView.text = value
         holder.deleteButton.setOnClickListener {
-            // แสดง Dialog ยืนยันก่อนลบ
+
             AlertDialog.Builder(holder.itemView.context)
                 .setTitle("ลบ")
                 .setMessage("คุณต้องการลบ '$value' หรือไม่?")
                 .setPositiveButton("ลบ") { _, _ ->
-                    onDelete(key) // ลบข้อมูลเมื่อกด "ลบ" ใน Dialog
+                    onDelete(key)
                 }
                 .setNegativeButton("ยกเลิก", null)
                 .show()

@@ -20,7 +20,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
         private const val ACTION_STOP_ALARM = "com.neatroots.newdog.STOP_ALARM"
-        private const val REPEAT_INTERVAL = 60 * 1000L // 1 นาที
+        private const val REPEAT_INTERVAL = 60 * 1000L
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -43,7 +43,6 @@ class AlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        // ตรวจสอบว่าอีเว้นท์ยังอยู่ใน Firebase หรือไม่
         checkEventExists(context, eventId) { exists ->
             if (!exists) {
                 Log.d("AlarmDebug", "อีเว้นท์ $eventId ถูกลบแล้ว หยุดการแจ้งเตือน")

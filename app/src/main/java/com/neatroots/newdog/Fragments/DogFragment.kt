@@ -131,7 +131,7 @@ class DogFragment : Fragment() {
                         val title = it["title"] as? String
 
                         if (date != null && time != null) {
-                            // แปลง date และ time เป็น timestamp
+
                             val sdf = SimpleDateFormat("yyyy-M-d HH:mm", Locale.getDefault())
                             val eventDateTimeString = "$date $time"
                             val eventTimestamp = try {
@@ -143,7 +143,7 @@ class DogFragment : Fragment() {
 
                             Log.d("DogFragment", "Notification: Title=$title, DateTime=$eventDateTimeString, Timestamp=$eventTimestamp, CurrentTime=$currentTime, Read=$isRead")
 
-                            // แสดงจุดแดงเฉพาะเมื่อถึงเวลาที่กำหนดและยังไม่ได้อ่าน
+
                             if (!isRead && eventTimestamp > 0 && currentTime >= eventTimestamp) {
                                 notificationCount++
                             }

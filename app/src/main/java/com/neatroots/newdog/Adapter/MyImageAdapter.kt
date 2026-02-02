@@ -47,7 +47,7 @@ class MyImageAdapter(
         firebaseUser = FirebaseAuth.getInstance().currentUser
         val post = mPosts[position]
 
-        // ตั้งค่ารูปภาพหลายรูปใน RecyclerView
+
         val imageUrls = post.postImages ?: emptyList()
         holder.postImagesRecycler.apply {
             visibility = if (imageUrls.isNotEmpty()) {
@@ -68,22 +68,21 @@ class MyImageAdapter(
             }
         }
 
-        // ตั้งค่า Indicator
+
         holder.imageIndicator.apply {
             visibility = if (imageUrls.size > 1) View.VISIBLE else View.GONE
             text = "1/${imageUrls.size}"
         }
 
-        // ตั้งค่าคำอธิบาย
+
         holder.description.apply {
             visibility = if (post.description.isEmpty()) View.GONE else View.VISIBLE
             text = post.description
         }
 
-        // ตั้งค่าเวลาโพสต์
+
         holder.postTime.text = post.getTimeAgo() ?: "ไม่ทราบเวลา"
 
-        // ซ่อน optionButton ถ้าไม่ใช่โพสต์ของตัวเอง
         holder.optionButton.visibility = if (post.publisher == firebaseUser?.uid) View.VISIBLE else View.GONE
 
         getUserInfo(holder.profileImage, holder.userName, post.publisher)
@@ -92,7 +91,7 @@ class MyImageAdapter(
         getTotalComments(holder.comments, post.postid)
         checkSaveStatus(post.postid, holder.saveButton)
 
-        // การคลิกปุ่ม Like
+
         holder.likeButton.setOnClickListener {
             firebaseUser?.let { user ->
                 val likesRef = FirebaseDatabase.getInstance().reference.child("Likes").child(post.postid)
@@ -107,7 +106,6 @@ class MyImageAdapter(
             }
         }
 
-        // การคลิกปุ่ม Comment
         val commentClickListener = View.OnClickListener {
             Intent(mContext, CommentsActivity::class.java).apply {
                 putExtra("postId", post.postid)
@@ -118,7 +116,6 @@ class MyImageAdapter(
         holder.commentButton.setOnClickListener(commentClickListener)
         holder.comments.setOnClickListener(commentClickListener)
 
-        // การคลิกปุ่ม Save
         holder.saveButton.setOnClickListener {
             firebaseUser?.let { user ->
                 val savesRef = FirebaseDatabase.getInstance().reference.child("Saves").child(user.uid).child(post.postid)
@@ -130,7 +127,6 @@ class MyImageAdapter(
             }
         }
 
-        // การคลิกดู Likes
         holder.likes.setOnClickListener {
             Intent(mContext, ShowUsersActivity::class.java).apply {
                 putExtra("id", post.postid)
@@ -139,7 +135,6 @@ class MyImageAdapter(
             }
         }
 
-        // การคลิกปุ่ม Option (ถ้ายังมองเห็น)
         holder.optionButton.setOnClickListener { showPopupMenu(holder, post.postid) }
     }
 

@@ -28,22 +28,22 @@ class DogProfileActivity : AppCompatActivity() {
         binding = ActivityDogProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // รับ dogId จาก Intent (ส่งมาจาก DogAdapter)
+
         dogId = intent.getStringExtra("dogId") ?: ""
         if (dogId.isEmpty()) {
             finish()
             return
         }
 
-        // ตั้งค่า Toolbar
+
         setSupportActionBar(binding.proToolbar)
 
         binding.back.setOnClickListener { finish() }
 
-        // ดึงข้อมูลพื้นฐานจาก Firebase
+
         fetchBasicDogInfo()
 
-        // ตั้งค่า ViewPager2 และ TabLayout
+
         val adapter = DogProfilePagerAdapter(this, dogId)
         binding.viewPager.adapter = adapter
         TabLayoutMediator(binding.tabInfo, binding.viewPager) { tab, position ->
@@ -54,7 +54,7 @@ class DogProfileActivity : AppCompatActivity() {
             }
         }.attach()
 
-        // Listener ปุ่มแก้ไขข้อมูล
+
         binding.editPro.setOnClickListener {
             val intent = Intent(this, EditDogInfoActivity::class.java)
             intent.putExtra("dogId", dogId)
@@ -87,7 +87,7 @@ class DogProfileActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // จัดการข้อผิดพลาด
+
             }
         })
     }

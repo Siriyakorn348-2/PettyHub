@@ -29,7 +29,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         resetButton = findViewById(R.id.reset_password_button)
         toolbar = findViewById(R.id.toolbar)
 
-        // ตั้งค่า Toolbar
+
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -64,7 +64,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                         "ส่งอีเมลรีเซ็ตรหัสผ่านเรียบร้อย กรุณาตรวจสอบกล่องจดหมาย!",
                         Toast.LENGTH_LONG
                     ).show()
-                    finish() // ปิดหน้านี้หลังจากส่งสำเร็จ
+                    finish()
                 } else {
                     Toast.makeText(
                         this,
@@ -76,7 +76,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed() // กดปุ่มย้อนกลับใน Toolbar ให้ทำงานเหมือนกดปุ่ม Back
+        onBackPressed()
         return true
     }
 }

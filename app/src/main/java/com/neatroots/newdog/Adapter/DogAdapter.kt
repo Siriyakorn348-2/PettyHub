@@ -58,7 +58,7 @@ class DogAdapter(
         val dog = dogList[position]
         Log.d("DogAdapter", "กำลังผูกข้อมูล: ตำแหน่ง=$position, ชื่อ=${dog.getDogName()}, สายพันธุ์=${dog.getDogBreed()}")
 
-        // รูปภาพ
+
         val dogImageUrl = dog.getDogImage()
         if (!dogImageUrl.isNullOrEmpty()) {
             Picasso.get()
@@ -69,10 +69,10 @@ class DogAdapter(
             holder.dogImageView.setImageResource(R.drawable.dog)
         }
 
-        // ชื่อ
+
         holder.nameTextView.text = "${dog.getDogName() ?: "ไม่ทราบชื่อ"}"
 
-        // เพศ
+
         val genderText = "เพศ       ${dog.getDogGender() ?: "ไม่ระบุ"}"
         val genderSpannable = SpannableString(genderText)
         genderSpannable.setSpan(
@@ -83,7 +83,7 @@ class DogAdapter(
         )
         holder.genderTextView.text = genderSpannable
 
-        // สายพันธุ์
+
         val breedText = "สายพันธุ์   ${dog.getDogBreed() ?: "ไม่ระบุ"}"
         val breedSpannable = SpannableString(breedText)
         breedSpannable.setSpan(
@@ -94,14 +94,14 @@ class DogAdapter(
         )
         holder.breedTextView.text = breedSpannable
 
-        // เมื่อคลิกที่รายการ เปิด DogProfileActivity
+
         holder.itemView.setOnClickListener {
             val intent = Intent(context, DogProfileActivity::class.java)
             intent.putExtra("dogId", dog.getDogId())
             context.startActivity(intent)
         }
 
-        // เมนูลบ
+
         holder.menuButton.setOnClickListener {
             val popupMenu = PopupMenu(context, holder.menuButton)
             popupMenu.menu.add("ลบ")

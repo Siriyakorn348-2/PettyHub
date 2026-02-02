@@ -47,7 +47,6 @@ class AddPostActivity : AppCompatActivity() {
         close = findViewById(R.id.close)
         addImageButton = findViewById(R.id.add_image_button)
 
-        // ตั้งค่า RecyclerView
         imageRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         imageAdapter = PostImageAdapter(imageUris) { position ->
             imageUris.removeAt(position)

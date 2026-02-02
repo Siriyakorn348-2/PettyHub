@@ -72,7 +72,7 @@ class NewOwnerActivity : AppCompatActivity() {
             ))
         )
 
-        // ตั้งค่า RecyclerView
+
         binding.recyclerViewTips.layoutManager = LinearLayoutManager(this)
         adapter = OwnerTipAdapter(tips)
         binding.recyclerViewTips.adapter = adapter
@@ -84,7 +84,7 @@ class NewOwnerActivity : AppCompatActivity() {
     }
 }
 
-// Adapter สำหรับ RecyclerView
+
 class OwnerTipAdapter(private val tips: List<OwnerTip>) :
     androidx.recyclerview.widget.RecyclerView.Adapter<OwnerTipAdapter.ViewHolder>() {
 

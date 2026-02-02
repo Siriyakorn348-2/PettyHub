@@ -96,7 +96,7 @@ class PostAdapter(
         holder.postTime.text = if (post.dateTime > 0) post.getTimeAgo() else "ไม่ทราบเวลา"
 
         publisherInfo(holder.profileImage, holder.userName, post.publisher)
-        holder.bindProfileClick(post.publisher) // เพิ่มการคลิกไปยังโปรไฟล์
+        holder.bindProfileClick(post.publisher)
         isLikes(post.postid, holder.likeButton)
         numberOfLikes(holder.likes, post.postid)
         getTotalComments(holder.comments, post.postid)

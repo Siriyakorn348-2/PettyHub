@@ -64,7 +64,7 @@ class EventDogMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_dog_main)
 
-        // สร้าง Notification Channel
+
         createNotificationChannel()
 
         val toolbar = findViewById<Toolbar>(R.id.comments_toolbar)
@@ -101,14 +101,14 @@ class EventDogMainActivity : AppCompatActivity() {
 
         toggleCalendarModeButton.setOnClickListener { toggleCalendarMode() }
 
-        // รับวันที่จาก Intent ถ้ามี
+
         val intentDate = intent.getStringExtra("SELECTED_DATE")
         val today = CalendarDay.today()
         selectedDate = intentDate ?: "${today.year}-${today.month + 1}-${today.day}"
 
         calendarView.setCurrentDate(today)
 
-        // ถ้ามีวันที่จาก Intent ให้ตั้งค่าเป็นวันที่นั้น
+
         if (intentDate != null) {
             val sdf = SimpleDateFormat("yyyy-M-d", Locale.getDefault())
             val date = sdf.parse(intentDate)
@@ -258,7 +258,7 @@ class EventDogMainActivity : AppCompatActivity() {
             .setTitle("ยืนยันการลบ")
             .setMessage("คุณต้องการลบอีเว้นท์ '${event.title}' นี้หรือไม่?")
             .setPositiveButton("ลบ") { _, _ ->
-                // ยกเลิกการแจ้งเตือนใน AlarmManager
+
                 val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 val intent = Intent(this, AlarmReceiver::class.java).apply {
                     putExtra("event_id", event.id)
@@ -273,12 +273,12 @@ class EventDogMainActivity : AppCompatActivity() {
                 pendingIntent.cancel()
                 Log.d("AlarmDebug", "ยกเลิก AlarmManager สำหรับ ${event.title}")
 
-                // ลบสถานะ stopped_${event.id} ออกจาก SharedPreferences
+
                 val prefs = getSharedPreferences("AlarmPrefs", Context.MODE_PRIVATE)
                 prefs.edit().remove("stopped_${event.id}").apply()
                 Log.d("AlarmDebug", "ลบสถานะ stopped_${event.id} ออกจาก SharedPreferences")
 
-                // ลบอีเว้นท์จาก Firebase
+
                 database.child(selectedDate).child(event.id).removeValue()
                     .addOnSuccessListener {
                         Toast.makeText(this, "ลบอีเว้นท์เรียบร้อย", Toast.LENGTH_SHORT).show()
@@ -403,7 +403,7 @@ class EventDogMainActivity : AppCompatActivity() {
 
     @SuppressLint("ScheduleExactAlarm")
     private fun scheduleNotification(event: EventModel, date: String) {
-        // ตรวจสอบ permission
+
         if (!hasPermissions()) {
             requestPermissions()
             return
@@ -447,13 +447,13 @@ class EventDogMainActivity : AppCompatActivity() {
         }
     }
 
-    // ฟังก์ชันตรวจสอบ permission
+
     private fun hasPermissions(): Boolean {
         return (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.VIBRATE) == PackageManager.PERMISSION_GRANTED)
     }
 
-    // ฟังก์ชันขออนุญาต
+
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this,
@@ -465,7 +465,7 @@ class EventDogMainActivity : AppCompatActivity() {
         )
     }
 
-    // จัดการผลลัพธ์การขออนุญาต
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

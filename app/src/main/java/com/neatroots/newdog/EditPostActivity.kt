@@ -36,13 +36,13 @@ class EditPostActivity : AppCompatActivity() {
     private lateinit var addImageButton: ImageView
     private lateinit var postId: String
     private val GALLERY_PICK = 1
-    private var currentUserUid: String? = null // UID ของผู้ใช้ที่ล็อกอิน
+    private var currentUserUid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_post)
 
-        // ดึง UID ของผู้ใช้ปัจจุบัน
+
         currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
 
         storagePostPicRef = FirebaseStorage.getInstance().reference.child("Posts Pictures")
@@ -52,13 +52,12 @@ class EditPostActivity : AppCompatActivity() {
         close = findViewById(R.id.close)
         addImageButton = findViewById(R.id.add_image_button)
 
-        // ดึงข้อมูลโพสต์จาก Intent
+
         postId = intent.getStringExtra("postId") ?: ""
         description.setText(intent.getStringExtra("description"))
         val postImages = intent.getStringArrayListExtra("postImages") ?: arrayListOf()
         imageUris.addAll(postImages.map { Uri.parse(it) })
 
-        // ตั้งค่า RecyclerView
         imageRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         imageAdapter = PostImageAdapter(imageUris) { position ->
             imageUris.removeAt(position)
@@ -112,7 +111,7 @@ class EditPostActivity : AppCompatActivity() {
         progressDialog.setMessage("กรุณารอสักครู่ เรากำลังตรวจสอบและอัปเดตโพสต์ของคุณ...")
         progressDialog.show()
 
-        // ตรวจสอบว่าโพสต์นี้เป็นของผู้ใช้ปัจจุบันหรือไม่
+
         val postRef = FirebaseDatabase.getInstance().reference.child("Posts").child(postId)
         postRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -144,9 +143,9 @@ class EditPostActivity : AppCompatActivity() {
         if (imageUris.isNotEmpty()) {
             val imageUrls = mutableListOf<String>()
             var uploadCount = 0
-            val newImageUris = imageUris.filter { it.scheme != "https" && it.scheme != "http" } // รูปใหม่ที่ยังไม่ได้อัปโหลด
+            val newImageUris = imageUris.filter { it.scheme != "https" && it.scheme != "http" }
 
-            // คง URL รูปภาพเก่าไว้
+
             imageUrls.addAll(imageUris.filter { it.scheme == "https" || it.scheme == "http" }.map { it.toString() })
 
             if (newImageUris.isNotEmpty()) {

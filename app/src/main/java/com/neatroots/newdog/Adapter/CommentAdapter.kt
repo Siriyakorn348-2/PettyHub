@@ -57,7 +57,7 @@ class CommentAdapter(
 
         holder.bindProfileClick(comment.getPublisher())
 
-        // แสดงปุ่มตัวเลือกเฉพาะผู้เขียนความคิดเห็น
+
         if (comment.getPublisher() == firebaseUser?.uid) {
             holder.optionButton.visibility = View.VISIBLE
             holder.optionButton.setOnClickListener {

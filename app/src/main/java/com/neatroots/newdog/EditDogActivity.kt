@@ -63,7 +63,7 @@ class EditDogActivity : AppCompatActivity() {
             setCancelable(false)
         }
 
-        // รับข้อมูลจาก Intent
+
         dogId = intent.getStringExtra("dogId") ?: ""
         nameDog.text = intent.getStringExtra("dogName")
         sexDog.setText(intent.getStringExtra("dogGrender"))
@@ -80,7 +80,7 @@ class EditDogActivity : AppCompatActivity() {
             Picasso.get().load(myUrl).into(imageDog)
         }
 
-        // Setup dropdowns
+
         val sexOptions = arrayOf("male", "female")
         val sexAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sexOptions)
         sexDog.setAdapter(sexAdapter)
@@ -93,7 +93,7 @@ class EditDogActivity : AppCompatActivity() {
         val breedAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, breedOptions)
         breedDog.setAdapter(breedAdapter)
 
-        // Setup DatePicker for birth date
+
         dogBirthDate.setOnClickListener {
             val calendar = if (selectedBirthDate != 0L) {
                 Calendar.getInstance().apply { timeInMillis = selectedBirthDate }

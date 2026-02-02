@@ -36,7 +36,7 @@ class ShowUsersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_users)
 
-        // ดึง ID ของผู้ใช้ปัจจุบัน
+
         currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
         id = intent.getStringExtra("id").orEmpty()
@@ -142,13 +142,12 @@ class ShowUsersActivity : AppCompatActivity() {
                 for (snapshot in dataSnapshot.children) {
                     val user = snapshot.getValue(User::class.java)
                     if (user != null && user.isValid() && idList.contains(user.getUID())) {
-                        // กรองผู้ใช้ปัจจุบันออก เฉพาะในกรณี following และ followers
+
                         if (title == "following" || title == "followers") {
                             if (user.getUID() != currentUserId) {
                                 newUserList.add(user)
                             }
                         } else {
-                            // สำหรับ likes และ views ให้แสดงทุกคนรวมถึงตัวเอง
                             newUserList.add(user)
                         }
                     }
@@ -160,7 +159,7 @@ class ShowUsersActivity : AppCompatActivity() {
                 diffResult.dispatchUpdatesTo(userAdapter)
                 findViewById<ProgressBar>(R.id.progress_bar).visibility = View.GONE
 
-                // แสดงข้อความ "No users found" ถ้าไม่มีผู้ใช้
+
                 findViewById<TextView>(R.id.no_results_text).visibility =
                     if (userList.isEmpty()) View.VISIBLE else View.GONE
 
@@ -189,14 +188,14 @@ class ShowUsersActivity : AppCompatActivity() {
     }
 
     fun showProfileFragment(profileId: String) {
-        // ซ่อน Toolbar
+
         findViewById<Toolbar>(R.id.toolbar_show)?.visibility = View.GONE
 
-        // ซ่อนเนื้อหาเดิมทั้งหมด
+
         findViewById<View>(R.id.recycler_view_showuser)?.visibility = View.GONE
         findViewById<View>(R.id.no_results_text)?.visibility = View.GONE
 
-        // แสดง fragment_container
+
         findViewById<View>(R.id.fragment_container)?.visibility = View.VISIBLE
 
         val fragment = ProfileFragment().apply {

@@ -28,17 +28,17 @@ class DogDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dog_detail)
 
-        // Initialize views
+
         dogNameTextView = findViewById(R.id.nameDog)
         breedDogTextView = findViewById(R.id.breedDog)
         ageDogTextView = findViewById(R.id.ageDog)
         sexDogTextView = findViewById(R.id.sexDog)
         dogImageView = findViewById(R.id.dogImage)
 
-        // Get dogId from Intent
+
         dogId = intent.getStringExtra("dogId") ?: ""
 
-        // Load dog details
+
         loadDogDetails()
     }
 

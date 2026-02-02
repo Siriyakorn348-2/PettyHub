@@ -50,7 +50,6 @@ class UserAdapter(
             holder.userProfileImage.setImageResource(R.drawable.user)
         }
 
-        // เรียกเช็คสถานะเริ่มต้น และซ่อนปุ่ม Follow ถ้าเป็นตัวเอง
         firebaseUser?.uid?.let { currentUid ->
             if (user.getUID() == currentUid) {
                 holder.followButton.visibility = View.GONE
@@ -60,13 +59,10 @@ class UserAdapter(
             }
         }
 
-        // เพิ่มการคลิกเพื่อดูโปรไฟล์
         holder.bindProfileClick(user.getUID())
 
-        // การจัดการปุ่ม Follow
         holder.followButton.setOnClickListener {
             firebaseUser?.uid?.let { uid ->
-                // ไม่ให้ดำเนินการถ้าเป็นการติดตามตัวเอง
                 if (user.getUID() == uid) return@setOnClickListener
 
                 val followRef = FirebaseDatabase.getInstance().reference.child("Follow")

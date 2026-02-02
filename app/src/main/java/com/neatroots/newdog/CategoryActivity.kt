@@ -16,14 +16,11 @@ class CategoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-//        title = intent.getStringExtra("TITLE")
 
         val titleFromIntent = intent.getStringExtra("TITLE")
 
-        // ตั้งค่า title ของ Activity
         title = titleFromIntent
 
-        // อัปเดต TextView ใน Layout ด้วยค่า title
         binding.title.text = titleFromIntent
         setUpRecycleView()
 

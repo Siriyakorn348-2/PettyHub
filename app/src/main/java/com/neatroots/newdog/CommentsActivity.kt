@@ -155,13 +155,11 @@ class CommentsActivity : AppCompatActivity() {
                 if (snapshot.exists()) {
                     val post = snapshot.getValue(Post::class.java)
                     if (post != null) {
-                        // แก้ไขส่วน description
                         postTextView?.apply {
-                            text = post.description ?: "" // ถ้า null ให้ใช้ empty string
+                            text = post.description ?: ""
                             visibility = if (post.description.isNullOrBlank()) View.GONE else View.VISIBLE
                         }
 
-                        // ส่วนจัดการรูปภาพ
                         post.postImages?.let { imageUrls ->
                             if (imageUrls.isNotEmpty()) {
                                 postImagesRecyclerView?.visibility = View.VISIBLE
@@ -194,7 +192,6 @@ class CommentsActivity : AppCompatActivity() {
                             }
                         }
 
-                        // ส่วนข้อมูลผู้โพสต์
                         if (!post.publisher.isNullOrBlank()) {
                             FirebaseDatabase.getInstance().reference.child("Users").child(post.publisher)
                                 .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -205,7 +202,6 @@ class CommentsActivity : AppCompatActivity() {
                                                 userNameTextView?.text = user.getUsername()
                                                 Picasso.get().load(user.getImage()).placeholder(R.drawable.user).into(profileImageView)
 
-                                                // เพิ่มการคลิกไปยังโปรไฟล์สำหรับทั้งรูปและชื่อ
                                                 val profileClickListener = View.OnClickListener {
                                                     showProfileFragment(post.publisher)
                                                 }
@@ -274,13 +270,11 @@ class CommentsActivity : AppCompatActivity() {
     }
 
     fun showProfileFragment(profileId: String) {
-        // ซ่อนเนื้อหาเดิมทั้งหมด
         findViewById<View>(R.id.app_bar_layout_comments)?.visibility = View.GONE
         findViewById<View>(R.id.post_container)?.visibility = View.GONE
         findViewById<View>(R.id.comments_recycler)?.visibility = View.GONE
         findViewById<View>(R.id.commentRelative)?.visibility = View.GONE
 
-        // แสดง fragment_container
         findViewById<View>(R.id.fragment_container)?.visibility = View.VISIBLE
 
         val fragment = ProfileFragment().apply {
@@ -290,6 +284,6 @@ class CommentsActivity : AppCompatActivity() {
         }
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
-            .commit() // ไม่ต้อง addToBackStack เพราะ CommentsActivity ไม่จัดการ back stack
+            .commit()
     }
 }

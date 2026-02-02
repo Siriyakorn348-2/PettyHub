@@ -35,15 +35,13 @@ class BarProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_bar_profile)
 
 
-        init() // เพิ่มบรรทัดนี้
+        init()
 
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth!!.currentUser
-//นําค่ามาใส่ลงใน TextView ที5สร้างขึIน
         username_bar_pro?.text =""+ user!!.displayName
         email_bar_pro?.text = "" + user.email
         mAuthListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            // ตรวจสอบความถูกต้องของ user และ displayName
             val user = mAuth!!.currentUser
             Log.d("YourTag", "User Display Name: ${user?.displayName}")
 
@@ -51,7 +49,6 @@ class BarProfileActivity : AppCompatActivity() {
                 username_bar_pro?.text = "" + user.displayName
                 email_bar_pro?.text = "" + user.email
             } else {
-                // กรณีไม่มี displayName หรือ user ไม่ถูกต้อง
                 username_bar_pro?.text = "N/A"
                 email_bar_pro?.text = "N/A"
             }
@@ -69,16 +66,13 @@ class BarProfileActivity : AppCompatActivity() {
             mAuth!!.signOut()
             Toast.makeText(this, "Signed out!", Toast.LENGTH_LONG).show()
 
-            // เพิ่ม Log เพื่อตรวจสอบว่าถูกเรียกหรือไม่
             Log.d("Logout", "Logout button clicked")
 
-            // เมื่อคลิก Logout ให้เปิดหน้าล็อกอิน (LoginActivity)
             startActivity(Intent(this@BarProfileActivity, LoginActivity::class.java))
             finish()
         }
 
 
-        // กรณีกดปุ่ม Back
         back_bar_pro?.setOnClickListener { onBackPressed() }
     }
     override fun onStart() {

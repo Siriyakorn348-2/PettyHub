@@ -26,7 +26,7 @@ class EventAlertActivity : AppCompatActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         window.attributes.dimAmount = 0.5f
 
-        // รับข้อมูลจาก Intent
+
         val eventTitle = intent.getStringExtra("event_title") ?: "อีเว้นท์"
         val eventDescription = intent.getStringExtra("event_description") ?: ""
         Log.d("AlertDebug", "ได้รับ title: $eventTitle, description: $eventDescription")

@@ -47,7 +47,7 @@ class BootReceiver : BroadcastReceiver() {
     }
 
     private fun scheduleNotification(context: Context, event: EventModel, date: String) {
-        // ตรวจสอบ permission
+
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.WAKE_LOCK) != PackageManager.PERMISSION_GRANTED) {
             Log.w("BootDebug", "ไม่มี WAKE_LOCK permission - ข้ามการตั้งค่าแจ้งเตือน")
             return

@@ -16,7 +16,7 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase {
-            // ถ้ามี instance อยู่แล้วให้ return ทันที ถ้ายังไม่มีให้สร้างใหม่
+
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,

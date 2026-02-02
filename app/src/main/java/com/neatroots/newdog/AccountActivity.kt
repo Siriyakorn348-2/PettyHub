@@ -124,11 +124,10 @@ class AccountActivity : AppCompatActivity() {
         if (TextUtils.isEmpty(profileFragmentUsername.text.toString())) {
             Toast.makeText(this, "กรุณากรอกชื่อผู้ใช้", Toast.LENGTH_LONG).show()
         } else {
-            // แสดง ProgressDialog
             val progressDialog = ProgressDialog(this).apply {
                 setTitle("การตั้งค่าบัญชี")
                 setMessage("กรุณารอสักครู่ กำลังอัปเดตชื่อผู้ใช้...")
-                setCanceledOnTouchOutside(false) // ป้องกันการแตะนอกเพื่อยกเลิก
+                setCanceledOnTouchOutside(false)
                 show()
             }
 
@@ -138,13 +137,12 @@ class AccountActivity : AppCompatActivity() {
             }
 
             usersRef.updateChildren(userMap).addOnCompleteListener { task ->
-                progressDialog.dismiss() // ปิด ProgressDialog เมื่อเสร็จสิ้น
+                progressDialog.dismiss()
                 if (task.isSuccessful) {
                     Toast.makeText(this, "อัปเดตชื่อผู้ใช้สำเร็จ", Toast.LENGTH_LONG).show()
 
-                    // ส่ง Intent โดยระบุให้ไปที่ ProfileFragment
                     val intent = Intent(this, MainActivity::class.java).apply {
-                        putExtra("selectedNavItemId", R.id.nav_profile) // ระบุ ID ของ Bottom Navigation
+                        putExtra("selectedNavItemId", R.id.nav_profile)
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     }
                     startActivity(intent)
@@ -162,7 +160,6 @@ class AccountActivity : AppCompatActivity() {
         } else if (imageUri == null) {
             Toast.makeText(this, "กรุณาเลือกรูปภาพ", Toast.LENGTH_LONG).show()
         } else {
-            // แสดง ProgressDialog
             val progressDialog = ProgressDialog(this).apply {
                 setTitle("การตั้งค่าบัญชี")
                 setMessage("กรุณารอสักครู่ กำลังอัปเดตโปรไฟล์ของคุณ...")
@@ -189,10 +186,9 @@ class AccountActivity : AppCompatActivity() {
                     FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser.uid)
                         .updateChildren(userMap)
                         .addOnCompleteListener { updateTask ->
-                            progressDialog.dismiss() // ปิด ProgressDialog เมื่อเสร็จสิ้น
+                            progressDialog.dismiss()
                             if (updateTask.isSuccessful) {
                                 Toast.makeText(this, "อัปเดตโปรไฟล์สำเร็จ", Toast.LENGTH_LONG).show()
-                                // ส่ง Intent โดยระบุให้ไปที่ ProfileFragment
                                 val intent = Intent(this, MainActivity::class.java).apply {
                                     putExtra("selectedNavItemId", R.id.nav_profile)
                                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP

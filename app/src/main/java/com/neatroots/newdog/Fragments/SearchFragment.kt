@@ -40,7 +40,6 @@ class SearchFragment : Fragment() {
         recyclerView?.layoutManager = LinearLayoutManager(context)
 
         mUser = ArrayList()
-        // เปลี่ยนมาใช้ context แทน applicationContext
         userAdapter = context?.let { UserAdapter(it, mUser as ArrayList<User>, true) }
         recyclerView?.adapter = userAdapter
 

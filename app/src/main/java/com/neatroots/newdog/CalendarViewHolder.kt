@@ -11,7 +11,7 @@ import java.time.LocalDate
 class CalendarViewHolder(
     itemView: View,
     private val onItemListener: CalendarAdapter.OnItemListener,
-    private val days: ArrayList<LocalDate?> // days สามารถเป็น null ได้
+    private val days: ArrayList<LocalDate?>
 ) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
     val parentView: View = itemView.findViewById(R.id.parentView)
@@ -23,7 +23,6 @@ class CalendarViewHolder(
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onClick(view: View) {
-        // ตรวจสอบว่า days ไม่เป็น null และ adapterPosition ไม่เกินขนาด
         val date = days?.getOrNull(adapterPosition)
         date?.let {
             onItemListener.onItemClick(adapterPosition, it)

@@ -60,7 +60,7 @@ class EditDogInfoActivity : AppCompatActivity() {
             saveDogInfo()
         }
 
-        // ตั้งค่า Toolbar
+
         setSupportActionBar(binding.toolbar)
         binding.backIcon.setOnClickListener { finish() }
     }
@@ -82,7 +82,7 @@ class EditDogInfoActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, breedOptions)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.editDogBreed.adapter = adapter
-        binding.editDogBreed.setSelection(0) // ค่าเริ่มต้นเป็นตัวแรก
+        binding.editDogBreed.setSelection(0)
     }
 
     private fun setupGroupSpinner() {
@@ -210,7 +210,7 @@ class EditDogInfoActivity : AppCompatActivity() {
                 Toast.makeText(this, "อัปโหลดรูปภาพล้มเหลว", Toast.LENGTH_SHORT).show()
             }
         } else {
-            // ถ้าไม่เปลี่ยนรูปภาพ ให้คง URL เดิมไว้
+
             if (!currentImageUrl.isNullOrEmpty()) {
                 updatedData["dogImage"] = currentImageUrl!!
             }
