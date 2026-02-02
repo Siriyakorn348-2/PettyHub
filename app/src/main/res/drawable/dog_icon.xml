@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- หัวของสุนัข (วงกลมใหญ่) -->
+    <path
+        android:fillColor="#886B59"
+    android:pathData="M12,18 A6,6 0 1,0 12,6 A6,6 0 0,0 12,18 Z" />
+
+    <!-- หูซ้าย (ยาวและชี้ลง) -->
+    <path
+        android:fillColor="#886B59"
+        android:pathData="M6,8 L4,14 A2,2 0 0,1 6,16 L8,8 Z" />
+
+    <!-- หูขวา (ยาวและชี้ลง) -->
+    <path
+        android:fillColor="#886B59"
+        android:pathData="M18,8 L20,14 A2,2 0 0,0 18,16 L16,8 Z" />
+
+
+    <path
+        android:fillColor="#886B59"
+        android:pathData="M10,10 A1,1 0 1,1 10,12 A1,1 0 0,1 10,10 Z" />
+    <path
+        android:fillColor="#886B59"
+        android:pathData="M14,10 A1,1 0 1,1 14,12 A1,1 0 0,1 14,10 Z" />
+
+
+    <path
+        android:fillColor="#000000"
+        android:pathData="M11.5,14 H12.5 V16 H11.5 Z" />
+</vector>

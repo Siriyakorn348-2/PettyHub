@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="160dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- รูปภาพ -->
+        <ImageView
+            android:id="@+id/relatedImage"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_image"
+            android:contentDescription="รูปภาพเนื้อหาที่เกี่ยวข้อง" />
+
+        <!-- หัวข้อ -->
+        <TextView
+            android:id="@+id/relatedTitle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="หัวข้อ"
+            android:textSize="14sp"
+            android:textColor="#212121"
+            android:fontFamily="@font/newthaibold"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:padding="8dp" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

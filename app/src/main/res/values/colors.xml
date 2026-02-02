@@ -14,14 +14,39 @@
     <color name="whiteish">#FAFAFA</color>
 
     <color name="grey">#BBB</color>
-    <color name="blue">#FFF5ED</color>
+    <color name="blue">#60A6ED</color>
     <color name="red">#D9555A</color>
     <color name="brown">#EECFA1</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="green">#8BC34A</color>
+    <color name="pink">#A94DBA</color>
 
+
+
+
+    <color name="color1">#9b9484</color>
+    <color name="color2">#ece4d4</color>
+    <color name="color3">#d4ccc4</color>
+    <color name="color4">#e4d4bc</color>
+    <color name="color5">#c4bcac</color>
+    <color name="color6">#9b9484</color>
+    <color name="color7">#ae917c</color>
+    <color name="color8">#e9e7e2</color>
     <color name="brownn">#886B59</color>
-
     <color name="brow_light">#514035</color>
 
+    <color name="little_bit_dark_purple">#BC8FD0</color>
+    <color name="light_Purple">#DAB9E6</color>
+    <color name="purple">#C084CC</color>
+    <color name="dark_purple">#957DAD</color>
+    <color name="so_dark_purple">#762087</color>
+    <color name="very_light_purple">#F9F1FB</color>
 
 
+    <color name="pastel_blue">#A2CFFE</color>
+    <color name="pastel_cream">#F5F6E9</color>
+    <color name="pastel_mint">#B5EAD7</color>
+    <color name="text_primary">#4A4A4A</color>
+    <color name="text_secondary">#7A7A7A</color>
+    <color name="tab_unselected">#999999</color>
 </resources>

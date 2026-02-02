@@ -1,68 +1,41 @@
 package com.neatroots.newdog.Model
 
+import android.text.format.DateUtils
+
 class Post {
-    private var postid : String = ""
-    private var postimage : String = ""
-    private var publisher : String = ""
-    private var description : String = ""
-    private var username: String = ""
-
-
-    private var publisherImage: String = ""
-    private var publisherName: String = ""
+    var postid: String = ""
+    var postImages: List<String>? = null
+    var publisher: String = ""
+    var description: String = ""
+    var username: String = ""
+    var dateTime: Long = 0L
+    var publisherImage: String = ""
+    var publisherName: String = ""
+    var timeAgoText: String = ""
 
     constructor()
-    constructor(postid: String, postimage: String, publisher: String, description: String, username: String) {
+
+    constructor(
+        postid: String,
+        postImages: List<String>?,
+        publisher: String,
+        description: String,
+        username: String,
+        dateTime: Long
+    ) {
         this.postid = postid
-        this.postimage = postimage
+        this.postImages = postImages
         this.publisher = publisher
         this.description = description
-        this.username = username  // ตั้งค่า username
-    }
-    fun getUsername(): String {
-        return username
-    }
-
-    fun setUsername(username: String) {
         this.username = username
-    }
-    fun getPostid(): String {
-        return postid
-    }
-    fun setPostid(postid: String) {
-        this.postid = postid
-    }
-    fun getPostimage(): String {
-        return postimage
-    }
-    fun setPostimage(postimage: String) {
-        this.postimage = postimage
-    }
-    fun getPublisher(): String {
-        return publisher
-    }
-    fun setPublisher(publisher: String) {
-        this.publisher = publisher
-    }
-    fun getDescription(): String {
-        return description
-    }
-    fun setDescription(description: String) {
-        this.description = description
-    }
-    fun getPublisherImage(): String {
-        return publisherImage
+        this.dateTime = dateTime
     }
 
-    fun setPublisherImage(publisherImage: String) {
-        this.publisherImage = publisherImage
-    }
-
-    fun getPublisherName(): String {
-        return publisherName
-    }
-
-    fun setPublisherName(publisherName: String) {
-        this.publisherName = publisherName
+    fun getTimeAgo(): String {
+        return DateUtils.getRelativeTimeSpanString(
+            dateTime,
+            System.currentTimeMillis(),
+            DateUtils.MINUTE_IN_MILLIS
+        ).toString()
     }
 }

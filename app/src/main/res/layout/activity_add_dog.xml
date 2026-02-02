@@ -1,205 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddDogActivity"
-    >
+    android:background="@color/white"
+    tools:context=".AddDogActivity">
 
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/color8"
+    app:contentInsetStart="0dp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+<androidx.constraintlayout.widget.ConstraintLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/toolbar"
-            app:contentInsetStart="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+<ImageButton
+    android:id="@+id/back_image_add"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:background="@android:color/transparent"
+    android:src="@drawable/back_l"
+    android:contentDescription="Back"
+    android:padding="12dp"
+    app:tint="@color/color7"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="เพิ่มสุนัขของคุณ"
+    android:textSize="18sp"
+    android:textColor="@color/color7"
+    android:textStyle="bold"
+    app:layout_constraintStart_toEndOf="@id/back_image_add"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
 
-                <ImageButton
-                    android:id="@+id/back_image_add"
-                    style="@style/icon"
-                    android:background="#00FFFFFF"
-                    android:src="@drawable/back_l"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+    <!-- รูปสุนัข -->
+    <de.hdodenhof.circleimageview.CircleImageView
+    android:id="@+id/image_dog"
+    android:layout_width="120dp"
+    android:layout_height="120dp"
+    android:layout_marginTop="24dp"
+    android:src="@drawable/dog"
+    app:civ_border_color="#C4BCAC"
+    app:civ_border_width="2dp"
+    app:layout_constraintTop_toBottomOf="@id/toolbar"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
 
-                <TextView
-                    style="@style/toolbar_title"
-                    android:text="Add your dog"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/back_image_add"
-                    app:layout_constraintTop_toTopOf="parent" />
+    <!-- ปุ่มเพิ่มรูป -->
 
+    <!-- ชื่อสุนัข -->
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageButton
+        android:id="@+id/add_image_dag"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="84dp"
+        android:layout_marginTop="92dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/add_post"
+        app:layout_constraintStart_toStartOf="@id/image_dog"
+        app:layout_constraintTop_toTopOf="@+id/image_dog"
+        app:tint="#9B9484" />
 
-        </androidx.appcompat.widget.Toolbar>
+    <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/add_nameDog"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="32dp"
+    android:layout_marginTop="35dp"
+    android:hint="ชื่อสุนัข"
+    android:textColorHint="#9B9484"
+    app:boxStrokeColor="#C4BCAC"
+    app:boxBackgroundColor="#FFFFFF"
+    app:layout_constraintTop_toBottomOf="@id/image_dog"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
 
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/image_dog"
-            android:layout_width="99dp"
-            android:layout_height="123dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/dog"
-            app:civ_border_color="@color/black"
-            app:civ_border_width="2dp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.503"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.064"
-            tools:ignore="MissingConstraints" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_nameDog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="32dp"
-            android:backgroundTint="@color/black"
-            android:hint="Dog name"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_dog"
-            app:layout_constraintVertical_bias="0.059">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/adddog_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/blue"
-
-                android:visibility="visible" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_Breed"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="32dp"
-            android:hint="Breed"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_nameDog">
-
-            <AutoCompleteTextView
-                android:id="@+id/breedAutoComplete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/blue"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_age"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="32dp"
-            android:hint="Age"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_Breed">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/dog_age"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/blue" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/save_add"
-            style="@style/Widget.Material3.Button.Icon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="#886B59"
-            android:text="Seve"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintEnd_toEndOf="@+id/add_gender"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/add_gender"
-            app:layout_constraintTop_toBottomOf="@+id/add_gender" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_gender"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="32dp"
-            android:hint="Grender"
-            app:layout_constraintEnd_toEndOf="@+id/add_age"
-            app:layout_constraintStart_toStartOf="@+id/add_age"
-            app:layout_constraintTop_toBottomOf="@+id/add_age">
-
-            <AutoCompleteTextView
-                android:id="@+id/sexAutoComplete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/blue"
-                android:inputType="none" />
+    <com.google.android.material.textfield.TextInputEditText
+    android:id="@+id/adddog_name"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="#9B9484" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
-        <Button
-            android:id="@+id/delete_dog"
-            style="@style/Widget.Material3.Button.Icon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="44dp"
-            android:backgroundTint="#CF0606"
-            android:text="Delete"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/save_add"
-            app:layout_constraintHorizontal_bias="0.4"
-            app:layout_constraintStart_toStartOf="@+id/save_add"
-            app:layout_constraintTop_toBottomOf="@+id/save_add" />
+    <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/add_Breed"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="32dp"
+    android:layout_marginTop="16dp"
+    android:hint="พันธุ์"
+    android:textColorHint="#9B9484"
+    app:boxStrokeColor="#C4BCAC"
+    app:boxBackgroundColor="#FFFFFF"
+    app:layout_constraintTop_toBottomOf="@id/add_nameDog"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageButton
-            android:id="@+id/add_image_dag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="76dp"
-            android:backgroundTint="#00FFFFFF"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.357"
-            app:layout_constraintStart_toStartOf="@+id/image_dog"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            app:srcCompat="@drawable/add_post" />
+<AutoCompleteTextView
+    android:id="@+id/breedAutoComplete"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:inputType="none"
+    android:textColor="#9B9484" />
+</com.google.android.material.textfield.TextInputLayout>
+
+    <!-- วันเกิด -->
+<com.google.android.material.textfield.TextInputLayout
+android:id="@+id/add_age"
+style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:layout_marginStart="32dp"
+android:layout_marginEnd="32dp"
+android:layout_marginTop="16dp"
+android:hint="วันเกิด"
+android:textColorHint="#9B9484"
+app:boxStrokeColor="#C4BCAC"
+app:boxBackgroundColor="#FFFFFF"
+app:layout_constraintTop_toBottomOf="@id/add_Breed"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent">
+
+<com.google.android.material.textfield.TextInputEditText
+    android:id="@+id/dog_age"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:inputType="none"
+    android:focusable="false"
+    android:clickable="true"
+    android:textColor="#9B9484" />
+</com.google.android.material.textfield.TextInputLayout>
+
+        <!-- เพศ -->
+    <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/add_gender"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="32dp"
+    android:layout_marginTop="16dp"
+    android:hint="เพศ"
+    android:textColorHint="#9B9484"
+    app:boxStrokeColor="#C4BCAC"
+    app:boxBackgroundColor="#FFFFFF"
+    app:layout_constraintTop_toBottomOf="@id/add_age"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
+
+<AutoCompleteTextView
+    android:id="@+id/sexAutoComplete"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:inputType="none"
+    android:textColor="#9B9484" />
+</com.google.android.material.textfield.TextInputLayout>
+
+    <!-- ปุ่ม Save -->
+    <Button
+    android:id="@+id/save_add"
+    style="@style/Widget.Material3.Button"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="32dp"
+    android:layout_marginTop="32dp"
+    android:backgroundTint="#AE917C"
+    android:text="บันทึก"
+    android:textSize="18sp"
+    android:textColor="#FFFFFF"
+    app:layout_constraintTop_toBottomOf="@id/add_gender"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</RelativeLayout>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Fragments.DogInfoFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:elevation="4dp"
+            android:padding="16dp"
+            android:layout_margin="8dp">
+
+            <!-- ชื่อสุนัข -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="12dp">
+                <TextView
+                    android:id="@+id/dogNameLabel"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:text="ชื่อ "
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333"
+                    android:layout_marginLeft="8dp"/>
+                <TextView
+                    android:id="@+id/dogNameText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="-"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333"/>
+            </LinearLayout>
+
+            <!-- Card สำหรับข้อมูลอื่นๆ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:elevation="2dp">
+
+                <!-- พันธุ์ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="6dp">
+                    <TextView
+                        android:id="@+id/dogBreedLabel"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="พันธุ์ "
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/dogBreedText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- สี -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="6dp">
+                    <TextView
+                        android:id="@+id/dogColorLabel"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="สี "
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/dogColorText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- ลักษณะ/ตำหนิ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="6dp">
+                    <TextView
+                        android:id="@+id/dogMarkingsLabel"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="ลักษณะ/ตำหนิ "
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/dogMarkingsText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- เพศ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="6dp">
+                    <TextView
+                        android:id="@+id/dogGenderLabel"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="เพศ "
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/dogGenderText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- วันเกิด -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="6dp">
+                    <TextView
+                        android:id="@+id/dogBirthDateLabel"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="วันเกิด "
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/dogBirthDateText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- อายุ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="6dp">
+                    <TextView
+                        android:id="@+id/dogAgeLabel"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="อายุ "
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/dogAgeText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- น้ำหนัก -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="6dp">
+                    <TextView
+                        android:id="@+id/dogWeightLabel"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="น้ำหนัก "
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/dogWeightText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="- กก."
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- กรุ๊ปเลือด -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="6dp">
+                    <TextView
+                        android:id="@+id/dogGroupLabel"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="กรุ๊ปเลือด "
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/dogGroupText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- ทำหมัน -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="6dp">
+                    <TextView
+                        android:id="@+id/dogNeuteredLabel"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="ทำหมันแล้วหรือไม่ "
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/dogNeuteredText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="-"
+                        android:textSize="16sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

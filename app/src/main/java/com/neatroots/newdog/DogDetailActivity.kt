@@ -51,20 +51,20 @@ class DogDetailActivity : AppCompatActivity() {
                     val dog = dataSnapshot.getValue(Dog::class.java)
 
                     if (dog != null) {
-                        Log.d("DogDetailActivity", "Dog details: $dog")  // เพิ่ม Log นี้
+                        Log.d("DogDetailActivity", "Dog details: $dog")
 
                         dogNameTextView.text = "Name: ${dog.getDogName()}"
                         breedDogTextView.text = "Breed: ${dog.getDogBreed()}"
                         ageDogTextView.text = "Age: ${dog.getDogAge()} years"
-                        sexDogTextView.text = "Sex: ${dog.getDogGrender()}"
+                        sexDogTextView.text = "Sex: ${dog.getDogGender()}"
 
                         val imageUrl = dog.getDogImage()
-                        Log.d("DogDetailActivity", "Image URL: $imageUrl")  // เพิ่ม Log นี้
+                        Log.d("DogDetailActivity", "Image URL: $imageUrl")
 
                         if (!imageUrl.isNullOrEmpty()) {
                             Picasso.get().load(imageUrl)
                                 .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                                .placeholder(R.drawable.dog)
+                                .placeholder(R.drawable.dogdog)
                                 .into(dogImageView, object : Callback {
                                     override fun onSuccess() {
                                         Log.d("YourTag", "Image loaded successfully")
@@ -78,7 +78,7 @@ class DogDetailActivity : AppCompatActivity() {
                                     }
                                 })
                         } else {
-                            dogImageView.setImageResource(R.drawable.dog)
+                            dogImageView.setImageResource(R.drawable.dogdog)
                         }
                     }
                 } else {

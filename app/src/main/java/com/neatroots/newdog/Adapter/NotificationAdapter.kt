@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.NonNull
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
@@ -23,125 +22,132 @@ import com.neatroots.newdog.R
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
-class NotificationAdapter (private val mContext : Context,
-                           private val mNotification : List<Notification>)
-    : RecyclerView.Adapter<NotificationAdapter.ViewHolder>()
-{
+class NotificationAdapter(
+    private val mContext: Context,
+    private val mNotification: List<Notification>,
+    private val currentUserId: String
+) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(mContext).inflate(R.layout.notification_item_layout,parent,false)
+        val view = LayoutInflater.from(mContext).inflate(R.layout.notification_item_layout, parent, false)
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-      return  mNotification.size
-    }
+    override fun getItemCount(): Int = mNotification.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int)
-    {
-        val notification =mNotification[position]
-        if(notification.getText().equals("started following you"))
-        {
-            holder.text.text = "started following you"
-        }
-        else if (notification.getText().equals("liked your post "))
-        {
-            holder.text.text = "liked your post"
-        }
-        else if (notification.getText().contains("commented: "))
-        {
-            holder.text.text = notification.getText().replace("commented: ","commented: ")
-        }
-        else
-        {
-            holder.text.text = notification.getText()
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val notification = mNotification[position]
+
+        // ตรวจสอบว่าการแจ้งเตือนมาจากผู้ใช้คนอื่น
+        if (notification.getUserId() == currentUserId && notification.getText() == "liked your post ") {
+            holder.itemView.visibility = View.GONE
+            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+            return
+        } else {
+            holder.itemView.visibility = View.VISIBLE
+            holder.itemView.layoutParams = RecyclerView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
         }
 
-
-        userInfo(holder.profileImage,holder.userName,notification.getUserId())
-
-        if(notification.isIspost())
-        {
-            holder.postImage.visibility = View.VISIBLE
-            getPostImage(holder.postImage,notification.getPostId())
+        // ตั้งค่าข้อความแจ้งเตือน
+        holder.text.text = when {
+            notification.getText() == "started following you" -> "started following you"
+            notification.getText() == "liked your post " -> "liked your post"
+            notification.getText().contains("commented: ") -> notification.getText().replace("commented: ", "commented: ")
+            else -> notification.getText()
         }
-        else{
-            holder.postImage.visibility = View.GONE
-        }
-        holder.itemView.setOnClickListener{
-            if (notification.isIspost())
-            {
-                val editor = mContext.getSharedPreferences("PREFS",Context.MODE_PRIVATE).edit()
-                editor.putString("postId",notification.getPostId())
+
+        // ตั้งค่าเวลา - ลบการเช็ค > 0 ออก และเพิ่มการรับประกันค่า default
+        holder.timestamp.text = notification.getTimeAgo()
+
+        // เพิ่ม log เพื่อ debug
+        Log.d("NotificationAdapter", "Text: ${notification.getText()}, Timestamp: ${notification.getTimestamp()}, TimeAgo: ${notification.getTimeAgo()}")
+
+        userInfo(holder.profileImage, holder.userName, notification.getUserId())
+
+        // ตรวจสอบว่าเป็นโพสต์หรือไม่
+        holder.postImage.visibility = if (notification.isIspost() && !notification.getPostId().isNullOrEmpty()) {
+            getPostImage(holder.postImage, notification.getPostId())
+            View.VISIBLE
+        } else View.GONE
+
+        // การคลิกที่รายการแจ้งเตือน
+        holder.itemView.setOnClickListener {
+            val editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
+            if (notification.isIspost()) {
+                editor.putString("postId", notification.getPostId())
                 editor.apply()
                 (mContext as FragmentActivity).supportFragmentManager
-                    .beginTransaction().replace(R.id.fragment_container, PostDetailsFragment()).commit()
-            }
-            else
-            {
-                val editor = mContext.getSharedPreferences("PREFS",Context.MODE_PRIVATE).edit()
-                editor.putString("profileId",notification.getPostId())
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, PostDetailsFragment())
+                    .commit()
+            } else {
+                editor.putString("profileId", notification.getUserId())
                 editor.apply()
                 (mContext as FragmentActivity).supportFragmentManager
-                    .beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, ProfileFragment())
+                    .commit()
             }
         }
-
-    }
-    inner class ViewHolder(@NonNull itemView : View) :RecyclerView.ViewHolder(itemView)
-    {
-        var postImage : ImageView
-        var profileImage : CircleImageView
-        var userName : TextView
-        var text : TextView
-
-        init{
-            postImage = itemView.findViewById(R.id.notification_post_image)
-            profileImage = itemView.findViewById(R.id.notification_profile_image)
-            userName = itemView.findViewById(R.id.username_notification)
-            text = itemView.findViewById(R.id.comment_notification)
-        }
-    }
-    private fun userInfo(imageView : ImageView, userName : TextView , publisherId : String) {
-        val userRef = FirebaseDatabase.getInstance()
-            .getReference().child("Users")
-            .child(publisherId)
-
-        userRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(pO: DataSnapshot) {
-                if (pO.exists()) {
-                    val user = pO.getValue(User::class.java)
-
-                    Picasso.get().load(user!!.getImage()).placeholder(R.drawable.user).into(imageView)
-                   userName.text = user!!.getUsername()
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-
-            }
-        })
     }
 
-    private fun getPostImage(imageView: ImageView , postID : String) {
-        val postRef =
-            FirebaseDatabase.getInstance()
-                .reference.child("Posts")
-                .child(postID!!)
-        postRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(pO: DataSnapshot) {
-                if (pO.exists()) {
-                    val post = pO.getValue<Post>(Post::class.java)
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val postImage: ImageView = itemView.findViewById(R.id.notification_post_image)
+        val profileImage: CircleImageView = itemView.findViewById(R.id.notification_profile_image)
+        val userName: TextView = itemView.findViewById(R.id.username_notification)
+        val text: TextView = itemView.findViewById(R.id.comment_notification)
+        val timestamp: TextView = itemView.findViewById(R.id.notification_timestamp)
+    }
 
-                    if (post != null) {
-                        Picasso.get().load(post!!.getPostimage()).placeholder(R.drawable.user).into(imageView)
+    private fun userInfo(imageView: CircleImageView, userName: TextView, publisherId: String) {
+        FirebaseDatabase.getInstance().reference.child("Users").child(publisherId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val user = snapshot.getValue(User::class.java)
+                        user?.let {
+                            if (!it.getImage().isNullOrEmpty()) {
+                                Picasso.get().load(it.getImage()).placeholder(R.drawable.user).into(imageView)
+                            }
+                            userName.text = it.getUsername() ?: ""
+                        }
                     }
                 }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Handle onCancelled event if needed
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("NotificationAdapter", "Failed to load user info: ${error.message}")
+                }
+            })
     }
 
+    private fun getPostImage(imageView: ImageView, postId: String?) {
+        if (postId.isNullOrEmpty()) return
+
+        FirebaseDatabase.getInstance().reference.child("Posts").child(postId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val post = snapshot.getValue(Post::class.java)
+                        val postImageUrls = post?.postImages
+                        if (!postImageUrls.isNullOrEmpty()) {
+                            Picasso.get()
+                                .load(postImageUrls[0])
+                                .placeholder(R.drawable.user)
+                                .error(R.drawable.user)
+                                .into(imageView)
+                        } else {
+                            imageView.visibility = View.GONE
+                        }
+                    } else {
+                        imageView.visibility = View.GONE
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("NotificationAdapter", "Failed to load post image: ${error.message}")
+                    imageView.visibility = View.GONE
+                }
+            })
+    }
 }

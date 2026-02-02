@@ -4,139 +4,94 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".AccountActivity">
 
+    <!-- ปุ่มย้อนกลับ -->
+    <ImageButton
+        android:id="@+id/back_acc"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@color/white"
+        android:contentDescription="ย้อนกลับ"
+        app:srcCompat="@drawable/back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/profile_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="แก้ไขโปรไฟล์"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- รูปโปรไฟล์ -->
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_Image"
-        android:layout_width="119dp"
-        android:layout_height="106dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:src="@drawable/user"
         app:civ_border_color="#000000"
         app:civ_border_width="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.164"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp" />
 
+    <!-- ปุ่มเปลี่ยนรูปภาพ -->
+    <TextView
+        android:id="@+id/change_img_text_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="เปลี่ยนรูปภาพ"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/profile_Image"
+        app:layout_constraintStart_toStartOf="@id/profile_Image"
+        app:layout_constraintEnd_toEndOf="@id/profile_Image"
+        android:layout_marginTop="8dp" />
+
+    <!-- ชื่อผู้ใช้ -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/username_acc"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:hint="ชื่อผู้ใช้"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="56dp"
         android:layout_marginEnd="32dp"
-        android:hint="Username"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/change_img_text_btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_Image"
-        app:layout_constraintVertical_bias="0.059">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/username_acc_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:visibility="visible" />
+            android:background="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/email_acc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:hint="Email"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_acc">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/email_acc_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/password_acc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:hint="Password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_acc">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/password_acc_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
+    <!-- ปุ่มบันทึก -->
     <Button
         android:id="@+id/save_btn_acc"
         style="@style/Widget.Material3.Button.Icon"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#886B59"
-        android:text="Save"
-        android:textSize="18dp"
+        android:text="บันทึก"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/password_acc"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="@+id/password_acc"
-        app:layout_constraintTop_toBottomOf="@+id/password_acc" />
-
-    <Button
-        android:id="@+id/delete_account_btn"
-        style="@style/Widget.Material3.Button.Icon"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="96dp"
-        android:backgroundTint="#933838"
-        android:text="Delete"
-        android:textSize="18dp"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/save_btn_acc"
-        app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toStartOf="@+id/save_btn_acc" />
-
-    <ImageButton
-        android:id="@+id/back_acc"
-        android:layout_width="69dp"
-        android:layout_height="53dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.004"
-        app:srcCompat="@drawable/back" />
-
-    <TextView
-        android:id="@+id/change_img_text_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Chang Image"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="@+id/profile_Image"
-        app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="@+id/profile_Image"
-        app:layout_constraintTop_toBottomOf="@+id/profile_Image" />
-
+        android:textSize="18sp"
+        android:backgroundTint="@color/color7"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/username_acc"
+        app:layout_constraintStart_toStartOf="@id/username_acc"
+        app:layout_constraintEnd_toEndOf="@id/username_acc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

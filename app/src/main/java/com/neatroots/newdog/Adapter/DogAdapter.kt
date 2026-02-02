@@ -1,12 +1,20 @@
 package com.neatroots.newdog.Adapter
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -14,142 +22,154 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.neatroots.newdog.DogDetailActivity
-import com.neatroots.newdog.Fragments.ProfileFragment
+import com.neatroots.newdog.DogProfileActivity
+import com.neatroots.newdog.EditDogActivity
 import com.neatroots.newdog.Model.Dog
 import com.neatroots.newdog.R
-import com.squareup.picasso.Callback
-import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
-import de.hdodenhof.circleimageview.CircleImageView
-
+import java.util.Calendar
 
 class DogAdapter(
-    private val mContext: Context,
-    private var mDog: List<Dog>,
-    private val profileFragment: ProfileFragment,
+    private val context: Context,
+    private val dogList: MutableList<Dog>
+) : RecyclerView.Adapter<DogAdapter.DogViewHolder>() {
 
-    ) : RecyclerView.Adapter<DogAdapter.ViewHolder>() {
+    private var firebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
-
-
-    private var firebaseUser: FirebaseUser? = null
-
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var dogImg: CircleImageView
-        var dogName: TextView
-
-        init {
-            dogImg = itemView.findViewById(R.id.dog_img)
-            dogName = itemView.findViewById(R.id.dog_name_show)
-
-        }
+    inner class DogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val dogImageView: ImageView = itemView.findViewById(R.id.img)
+        val nameTextView: TextView = itemView.findViewById(R.id.title)
+        val genderTextView: TextView = itemView.findViewById(R.id.gender_value)
+        val breedTextView: TextView = itemView.findViewById(R.id.breed)
+        val menuButton: ImageButton = itemView.findViewById(R.id.menu_button)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(mContext).inflate(R.layout.dog_layout, parent, false)
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DogViewHolder {
+        val view = LayoutInflater.from(context).inflate(R.layout.item_dog, parent, false)
+        return DogViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return mDog.size
+        Log.d("DogAdapter", "จำนวนรายการ: ${dogList.size}")
+        return dogList.size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        firebaseUser = FirebaseAuth.getInstance().currentUser
-        val dog = mDog[position]
+    override fun onBindViewHolder(holder: DogViewHolder, position: Int) {
+        val dog = dogList[position]
+        Log.d("DogAdapter", "กำลังผูกข้อมูล: ตำแหน่ง=$position, ชื่อ=${dog.getDogName()}, สายพันธุ์=${dog.getDogBreed()}")
 
-
-        holder.itemView.setOnClickListener {
-            val dogId = dog.getDogId()
-            Log.d("MyDogAdapter", "Clicked on dog with ID: $dogId")
-
-            // สร้าง Intent และเพิ่ม dogId เข้าไป
-            val intent = Intent(mContext, DogDetailActivity::class.java)
-            intent.putExtra("dogId", dogId)
-
-            // เรียก startActivity ด้วย Intent
-            mContext.startActivity(intent)
-        }
-
-        // ตรวจสอบว่าหมาเป็นของเจ้าของแอคหรือไม่
-        if (dog.getUserId() == firebaseUser?.uid) {
-            holder.dogName.text = dog.getDogName()
-
-            val imageUrl = dog.getDogImage()
-            Log.d("YourTag", "Dog Image URL: $imageUrl")
-            if (!imageUrl.isNullOrEmpty()) {
-                Picasso.get().load(imageUrl)
-                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                    .placeholder(R.drawable.dog)
-                    .into(holder.dogImg, object : Callback {
-                        override fun onSuccess() {
-                            Log.d("YourTag", "Image loaded successfully")
-                        }
-
-                        override fun onError(e: Exception?) {
-                            Log.e("YourTag", "Failed to load image. Exception: ${e?.message}")
-                        }
-                    })
-            } else {
-                holder.dogImg.setImageResource(R.drawable.dog)
-            }
-
-            getDogInfo(holder.dogImg, holder.dogName, dog.getUserId())
+        // รูปภาพ
+        val dogImageUrl = dog.getDogImage()
+        if (!dogImageUrl.isNullOrEmpty()) {
+            Picasso.get()
+                .load(dogImageUrl)
+                .placeholder(R.drawable.dog)
+                .into(holder.dogImageView)
         } else {
-
-            holder.itemView.visibility = View.GONE
-            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+            holder.dogImageView.setImageResource(R.drawable.dog)
         }
-    }
 
-    private fun getDogInfo(imageDog: CircleImageView, dogName: TextView, userId: String) {
-        val dogRef = FirebaseDatabase.getInstance().reference.child("Dogs").child(userId)
+        // ชื่อ
+        holder.nameTextView.text = "${dog.getDogName() ?: "ไม่ทราบชื่อ"}"
 
-        dogRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.d("YourTag", "DataSnapshot: $dataSnapshot")
+        // เพศ
+        val genderText = "เพศ       ${dog.getDogGender() ?: "ไม่ระบุ"}"
+        val genderSpannable = SpannableString(genderText)
+        genderSpannable.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(context, R.color.brow_light)),
+            0,
+            "เพศ       ".length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        holder.genderTextView.text = genderSpannable
 
-                if (dataSnapshot.exists()) {
-                    val dog = dataSnapshot.getValue(Dog::class.java)
-                    if (dog != null) {
-                        Log.d("YourTag", "Dog Data: $dog")
+        // สายพันธุ์
+        val breedText = "สายพันธุ์   ${dog.getDogBreed() ?: "ไม่ระบุ"}"
+        val breedSpannable = SpannableString(breedText)
+        breedSpannable.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(context, R.color.brow_light)),
+            0,
+            "สายพันธุ์   ".length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        holder.breedTextView.text = breedSpannable
 
-                        // แสดงข้อมูลตัวหน้าหมาที่ถูกคลิก
-                        val imageUrl = dog.getDogImage()
-                        if (!imageUrl.isNullOrEmpty()) {
-                            Picasso.get().load(imageUrl)
-                                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                                .placeholder(R.drawable.dog)
-                                .into(imageDog, object : Callback {
-                                    override fun onSuccess() {
-                                        Log.d("YourTag", "Image loaded successfully")
-                                    }
+        // เมื่อคลิกที่รายการ เปิด DogProfileActivity
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, DogProfileActivity::class.java)
+            intent.putExtra("dogId", dog.getDogId())
+            context.startActivity(intent)
+        }
 
-                                    override fun onError(e: Exception?) {
-                                        Log.e("YourTag", "Failed to load image. Exception: ${e?.message}")
-                                    }
-                                })
-                        } else {
-                            imageDog.setImageResource(R.drawable.dog)
-                        }
-                        dogName.text = dog.getDogName()
-                    } else {
-                        Log.e("YourTag", "Dog is null")
+        // เมนูลบ
+        holder.menuButton.setOnClickListener {
+            val popupMenu = PopupMenu(context, holder.menuButton)
+            popupMenu.menu.add("ลบ")
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.title) {
+                    "ลบ" -> {
+                        AlertDialog.Builder(context)
+                            .setTitle("ลบข้อมูลสุนัข")
+                            .setMessage("คุณแน่ใจหรือไม่ที่จะลบ ${dog.getDogName()}?")
+                            .setPositiveButton("ใช่") { _, _ ->
+                                deleteDog(dog.getDogId(), position)
+                            }
+                            .setNegativeButton("ไม่") { dialog, _ -> dialog.dismiss() }
+                            .show()
+                        true
                     }
-                } else {
-                    Log.d("YourTag", "DataSnapshot does not exist")
+                    else -> false
                 }
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("YourTag", "Database error: ${error.message}")
-            }
-        })
+            popupMenu.show()
+        }
     }
 
-    fun updateData(newList: List<Dog>) {
-        mDog = newList
-        notifyDataSetChanged()
+    private fun calculateAge(birthDate: Long): String {
+        if (birthDate == 0L) return "ไม่ระบุ"
+
+        val currentTime = Calendar.getInstance()
+        val birthTime = Calendar.getInstance().apply { timeInMillis = birthDate }
+
+        var years = currentTime.get(Calendar.YEAR) - birthTime.get(Calendar.YEAR)
+        var months = currentTime.get(Calendar.MONTH) - birthTime.get(Calendar.MONTH)
+        val daysInMonth = currentTime.getActualMaximum(Calendar.DAY_OF_MONTH)
+        var days = currentTime.get(Calendar.DAY_OF_MONTH) - birthTime.get(Calendar.DAY_OF_MONTH)
+
+        if (days < 0) {
+            months--
+            days += daysInMonth
+        }
+        if (months < 0) {
+            years--
+            months += 12
+        }
+
+        return when {
+            years > 0 -> "$years ปี $months เดือน"
+            months > 0 -> "$months เดือน $days วัน"
+            else -> "$days วัน"
+        }
+    }
+
+    private fun deleteDog(dogId: String, position: Int) {
+        if (position < 0 || position >= dogList.size) {
+            Log.e("DogAdapter", "ตำแหน่งไม่ถูกต้อง: $position, ขนาดลิสต์: ${dogList.size}")
+            return
+        }
+
+        val dogsRef = FirebaseDatabase.getInstance().reference.child("Dogs").child(dogId)
+        dogsRef.removeValue().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("DogAdapter", "ลบข้อมูลสุนัขสำเร็จ: $dogId")
+                if (position < dogList.size) {
+                    dogList.removeAt(position)
+                    notifyItemRemoved(position)
+                    notifyItemRangeChanged(position, dogList.size)
+                }
+            } else {
+                Log.e("DogAdapter", "ลบข้อมูลล้มเหลว: ${task.exception?.message}")
+            }
+        }
     }
 }

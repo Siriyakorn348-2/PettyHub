@@ -3,15 +3,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-        mavenCentral()
         maven { url = uri("https://jitpack.io") }
-        jcenter(){
-            content{
-                includeModule ("com.theartofdev.edmodo","android-image-cropper")
-            }
-        }
-
-
     }
 }
 dependencyResolutionManagement {
@@ -19,15 +11,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven { url = uri("https://jitpack.io") }
-        jcenter(){
-            content{
-                includeModule ("com.theartofdev.edmodo","android-image-cropper")
-            }
-        }
     }
 }
-
 rootProject.name = "NewDog"
 include(":app")

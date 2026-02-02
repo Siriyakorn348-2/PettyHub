@@ -4,15 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
+    android:layout_marginTop="5dp"
     >
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/notification_profile_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/user"
-        >
-    </de.hdodenhof.circleimageview.CircleImageView>
+        android:src="@drawable/user" />
 
     <LinearLayout
         android:layout_toEndOf="@id/notification_profile_image"
@@ -27,26 +26,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="@color/brownn"
-            >
-        </TextView>
+            android:textColor="@color/brownn" />
         <TextView
             android:id="@+id/comment_notification"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/notification_timestamp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            >
-
-        </TextView>
-
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray" />
     </LinearLayout>
+
     <ImageView
         android:id="@+id/notification_post_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_alignParentEnd="true"
-        >
-
-    </ImageView>
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

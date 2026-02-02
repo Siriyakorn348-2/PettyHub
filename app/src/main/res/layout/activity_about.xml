@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color8" >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="เกี่ยวกับ PettyHub"
+        app:titleTextColor="#8D5522"
+    app:navigationIcon="@drawable/back"/>
+
+</com.google.android.material.appbar.AppBarLayout>
+
+    <!-- เนื้อหาหลัก -->
+<androidx.constraintlayout.widget.ConstraintLayout
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+<!-- การ์ดสำหรับเนื้อหา -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/content_card"
+        android:layout_width="362dp"
+        android:layout_height="563dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="80dp"
+        app:cardBackgroundColor="@color/color8"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- โลโก้แอป -->
+        <ImageView
+            android:id="@+id/app_logo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/logo1" />
+
+        <!-- หัวข้อ -->
+        <TextView
+            android:id="@+id/about_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="140dp"
+            android:text="เกี่ยวกับ PettyHub"
+            android:textColor="#8D5522"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <!-- คำอธิบายแอป -->
+        <TextView
+            android:id="@+id/about_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="200dp"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:text="PettyHub เป็นแอปที่ออกแบบมาสำหรับเจ้าของสุนัขและผู้ที่ชื่นชอบสุนัข ช่วยให้การดูแลสุนัขของคุณง่ายขึ้นด้วยฟีเจอร์เด่น เช่น ชุมชนสำหรับคนรักสุนัข, ความรู้ที่น่าสนใจเกี่ยวกับสุนัข และเครื่องมือจัดการข้อมูลสุนัขของคุณอย่างครบครัน"
+            android:textColor="#5D4037"
+            android:textSize="16sp" />
+
+        <!-- ข้อมูลเพิ่มเติม -->
+        <TextView
+            android:id="@+id/about_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="400dp"
+            android:layout_marginBottom="24dp"
+            android:text="พัฒนาโดย: ทีม PettyHub"
+            android:textColor="#5D4037"
+            android:textSize="14sp" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- ข้อมูลติดต่อ -->
+    <TextView
+    android:id="@+id/about_contact"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="ติดต่อเรา: newdog@example.com"
+    android:textSize="14sp"
+    android:textColor="@color/color7"
+    android:background="@drawable/rounded_contact_bg"
+    android:padding="8dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginBottom="16dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>

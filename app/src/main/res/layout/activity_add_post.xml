@@ -1,76 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AddPostActivity">
+    android:padding="16dp"
+    android:background="@color/white">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/windowBackground">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/close_tap"
-                    android:id="@+id/close"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:text="POST"
-                    android:id="@+id/post"
-                    android:textSize="16sp"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/colorPrimary"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
-
-            </RelativeLayout>
-
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/close"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/close"
+        android:layout_gravity="end"
+        android:background="@drawable/cardview_category_rv"
         android:padding="8dp"
-        android:orientation="vertical">
+        android:elevation="4dp"
+        android:contentDescription="ปิด" />
 
-        <ImageView
-            android:id="@+id/image_added"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/addimage" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#FFFFFF">
 
         <EditText
+            android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:hint="Description"
-            android:id="@+id/description"
-            android:maxLines="5"/>
+            android:hint="เขียนโพสต์ของคุณ..."
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:minLines="3"
+            android:gravity="top"
+            android:background="@android:color/transparent"
+            android:textColor="#333333"
+            android:textColorHint="#757575" />
+    </androidx.cardview.widget.CardView>
 
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/add_image_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/addimage"
+        android:contentDescription="เพิ่มรูปภาพ"
+        android:background="@drawable/rounded_card_background"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        android:elevation="4dp" />
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#FAFAFA">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/image_added_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:visibility="gone"
+            android:padding="8dp" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="โพสต์"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/color7"
+        android:background="@drawable/rounded_button_background"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="12dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="20dp"
+        android:elevation="4dp" />
 </LinearLayout>

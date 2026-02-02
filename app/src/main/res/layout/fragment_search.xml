@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/brownn"
+        android:background="@color/color8"
         android:padding="10dp"
         android:id="@+id/toolbar">
 
@@ -19,7 +19,7 @@
             android:layout_height="32dp"
             android:src="@drawable/back_l"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/white"
+            app:tint="@color/color7"
             android:layout_centerVertical="true"
             android:id="@+id/back_btn"/>
 
@@ -29,7 +29,7 @@
             android:text="Search User"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="@color/color7"
             android:layout_marginStart="10dp"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/back_btn"/>
@@ -59,7 +59,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="4dp"
             android:src="@drawable/searchs"
-            app:tint="@color/brownn" />
+            app:tint="@color/color7" />
 
         <EditText
             android:id="@+id/search_edit_text"
@@ -79,9 +79,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_search"
-        android:layout_width="401dp"
-        android:layout_height="404dp"
-        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="596dp"
         android:layout_below="@id/search_user_layout"
         android:padding="10dp" />
 

@@ -1,5 +1,6 @@
 package com.neatroots.newdog
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -22,6 +23,8 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var username_signup: EditText
     private lateinit var email_signup: EditText
     private lateinit var password_signup: EditText
+    private lateinit var confirm_password_signup: EditText
+    private lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +36,12 @@ class SignUpActivity : AppCompatActivity() {
         if (mAuth?.currentUser != null) {
             startActivity(Intent(this@SignUpActivity, MainActivity::class.java))
             finish()
+            return
+        }
+
+        progressDialog = ProgressDialog(this).apply {
+            setMessage("กำลังสมัครสมาชิก...")
+            setCancelable(false)
         }
 
         signin_link_btn.setOnClickListener {
@@ -44,81 +53,85 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    private fun init() {
+        username_signup = findViewById(R.id.adddog_name)
+        email_signup = findViewById(R.id.email_signup_layout)
+        password_signup = findViewById(R.id.pass_signup_layout)
+        confirm_password_signup = findViewById(R.id.confirm_pass_signup_layout)
+        signin_link_btn = findViewById(R.id.signin_link_btn)
+        signup_btn = findViewById(R.id.save_btn_acc)
+    }
+
     private fun createAccount() {
-        val userName = username_signup.text.toString()
-        val email = email_signup.text.toString()
-        val password = password_signup.text.toString()
+        val userName = username_signup.text.toString().trim()
+        val email = email_signup.text.toString().trim()
+        val password = password_signup.text.toString().trim()
+        val confirmPassword = confirm_password_signup.text.toString().trim()
 
         when {
             TextUtils.isEmpty(userName) -> showToast("Username is required")
             TextUtils.isEmpty(email) -> showToast("Email is required")
             TextUtils.isEmpty(password) -> showToast("Password is required")
+            TextUtils.isEmpty(confirmPassword) -> showToast("Confirm Password is required")
+            password != confirmPassword -> showToast("Passwords do not match")
             else -> {
-                // ใช้ Kotlin Coroutines เพื่อดำเนินการแบบ background
+                progressDialog.show()
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         val authResult = mAuth?.createUserWithEmailAndPassword(email, password)?.await()
-                        saveUserInfo(userName, email)
-                        showToast("Account has been created successfully.")
-                        navigateToMainActivity()
+                        if (authResult != null) {
+                            saveUserInfo(userName, email)
+                        } else {
+                            showToast("Failed to create account")
+                        }
                     } catch (e: Exception) {
                         val message = e.message ?: "Unknown error"
                         showToast("Error: $message")
+                    } finally {
+                        runOnUiThread { progressDialog.dismiss() }
                     }
                 }
             }
         }
     }
 
-    private fun init() {
-        username_signup = findViewById(R.id.adddog_name)
-        email_signup = findViewById(R.id.email_signup_layout)
-        signin_link_btn = findViewById(R.id.signin_link_btn)
-        signup_btn = findViewById(R.id.save_btn_acc)
-        password_signup = findViewById(R.id.pass_signup_layout)
-    }
-
     private fun saveUserInfo(enteredUsername: String, enteredEmail: String) {
-        val currentUserID = mAuth?.currentUser?.uid
-        val userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID!!)
-        val userMap = HashMap<String, Any>()
-        userMap["uid"] = currentUserID!!
-        userMap["username"] = enteredUsername.toLowerCase()
-        userMap["email"] = enteredEmail
-        userMap["image"] = "https://firebasestorage.googleapis.com/v0/b/mydog-568cd.appspot.com/o/Default%20Images%2Fuser%20(4).png?alt=media&token=23350a1f-4bce-4ad5-a3e2-76e7c256df52"
-
+        val currentUserID = mAuth?.currentUser?.uid ?: return
+        val userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID)
+        val userMap = HashMap<String, Any>().apply {
+            put("uid", currentUserID)
+            put("username", enteredUsername.toLowerCase())
+            put("email", enteredEmail)
+            put("image", "https://firebasestorage.googleapis.com/v0/b/mydog-568cd.appspot.com/o/Default%20Images%2Fuser%20(4).png?alt=media&token=23350a1f-4bce-4ad5-a3e2-76e7c256df52")
+        }
 
         userRef.setValue(userMap)
-
             .addOnCompleteListener { task ->
-                if (task.isSuccessful){
+                if (task.isSuccessful) {
+                    // เพิ่มข้อมูล Following
                     FirebaseDatabase.getInstance().reference
                         .child("Follow").child(currentUserID)
                         .child("Following").child(currentUserID)
                         .setValue(true)
-
-                    val intent = Intent(this@SignUpActivity,MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    finish()
-
+                        .addOnCompleteListener {
+                            showToast("Account has been created successfully")
+                            navigateToDogExperienceActivity()
+                        }
+                } else {
+                    showToast("Failed to save user info: ${task.exception?.message}")
                 }
-
             }
             .addOnFailureListener { e ->
-
+                showToast("Failed to save user info: ${e.message}")
             }
-
-
     }
-
 
     private fun showToast(message: String) {
         runOnUiThread { Toast.makeText(this, message, Toast.LENGTH_LONG).show() }
     }
 
-    private fun navigateToMainActivity() {
-        val intent = Intent(this@SignUpActivity, MainActivity::class.java).apply {
+    private fun navigateToDogExperienceActivity() {
+        val intent = Intent(this@SignUpActivity, DogExperienceActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(intent)

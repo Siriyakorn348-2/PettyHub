@@ -8,43 +8,46 @@ import androidx.room.Room
 import com.neatroots.newdog.databinding.ActivityCategoryBinding
 
 class CategoryActivity : AppCompatActivity() {
-
-
     private lateinit var rvAdapter: CategoryAdapter
-    private lateinit var dataList:ArrayList<Petdata>
-    private val binding by lazy {
+    private lateinit var dataList: ArrayList<DogData>
+    private val  binding by lazy {
         ActivityCategoryBinding.inflate(layoutInflater)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.headerTxt!!.text =intent.getStringExtra("TITLE")
-        setUpRecyclerView()
-        binding.gotoHome!!.setOnClickListener {
+//        title = intent.getStringExtra("TITLE")
+
+        val titleFromIntent = intent.getStringExtra("TITLE")
+
+        // ตั้งค่า title ของ Activity
+        title = titleFromIntent
+
+        // อัปเดต TextView ใน Layout ด้วยค่า title
+        binding.title.text = titleFromIntent
+        setUpRecycleView()
+
+        binding.back.setOnClickListener {
             finish()
         }
     }
 
-    private fun setUpRecyclerView() {
-        dataList= ArrayList()
-
-        binding.rvCategoty.layoutManager= LinearLayoutManager(this)
-        var db= Room.databaseBuilder(this@CategoryActivity, AppDatabase::class.java,"db_name")
+    private fun setUpRecycleView() {
+        dataList = ArrayList()
+        binding.rvCategory.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        var db = Room.databaseBuilder(this@CategoryActivity,AppDatabase::class.java,"db_name")
             .allowMainThreadQueries()
             .fallbackToDestructiveMigration()
-            .createFromAsset("petdata.db")
+            .createFromAsset("datadog.db")
             .build()
-
-        var daoObject=db.getDao()
-        var petdatas=daoObject.getAll()
-        for (i in petdatas!!.indices){
-            if (petdatas[i]!!.category.contains(intent.getStringExtra("CATEGORY")!!)){
-                dataList.add(petdatas[i]!!)
+        var daoObject = db.getDao()
+        var datas =daoObject.getAll()
+        for (i in datas!!.indices){
+            if (datas[i]!!.category.contains(intent.getStringExtra("CATEGORY")!!)){
+                dataList.add(datas[i]!!)
             }
-
-            rvAdapter= CategoryAdapter(dataList,this)
-            binding.rvCategoty.adapter=rvAdapter
+            rvAdapter=CategoryAdapter(dataList, this)
+            binding.rvCategory.adapter = rvAdapter
         }
     }
 }

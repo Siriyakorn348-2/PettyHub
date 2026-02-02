@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/edit_event"
+        android:title="แก้ไข" />
+    <item
+        android:id="@+id/delete_event"
+        android:title="ลบ"
+        android:icon="@android:drawable/ic_menu_delete"/>
+</menu>

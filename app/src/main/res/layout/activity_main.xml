@@ -29,27 +29,19 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/home_toolbar"
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/nav_view"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@color/brown">
-
-                <com.google.android.material.bottomnavigation.BottomNavigationView
-                    android:id="@+id/nav_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginRight="15dp"
-                    android:background="@color/brown"
-                    app:labelVisibilityMode="unlabeled"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:menu="@menu/bottom_nav_menu" />
-
-            </com.google.android.material.appbar.MaterialToolbar>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginRight="15dp"
+                android:background="#e9e7e2"
+                app:labelVisibilityMode="unlabeled"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:menu="@menu/bottom_nav_menu" />
 
         </com.google.android.material.appbar.AppBarLayout>
 

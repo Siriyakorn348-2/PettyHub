@@ -10,19 +10,41 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_show"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        >
-    </androidx.appcompat.widget.Toolbar>
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/color8"
+        app:titleTextColor="@color/brow_light"
+        app:navigationIconTint="@color/color7" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_showuser"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/toolbar_show"
-        >
+        android:padding="8dp"
+        tools:listitem="@layout/user_item_layout" />
 
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_show"
+        android:visibility="gone" />
 
-    </androidx.recyclerview.widget.RecyclerView>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/no_results_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No users found"
+        android:textSize="16sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </RelativeLayout>

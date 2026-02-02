@@ -1,0 +1,13 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- กำหนดสีพื้นหลังของปุ่ม -->
+    <solid android:color="@color/color8" />
+
+    <!-- กำหนดความโค้งของมุม -->
+    <corners android:radius="16dp" />
+
+    <stroke
+        android:width="2dp"
+        android:color="@color/color7"  />
+</shape>

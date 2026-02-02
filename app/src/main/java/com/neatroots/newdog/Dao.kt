@@ -5,7 +5,6 @@ import androidx.room.Query
 
 @Dao
 interface Dao {
-    @Query("SELECT * FROM petdata")
-    fun getAll():List<Petdata?>?
-
+    @Query("SELECT * FROM dogdata")
+    fun getAll():List<DogData?>
 }

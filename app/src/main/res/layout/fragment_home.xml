@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/very_light_purple"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.HomeFragment">
 
@@ -15,25 +16,32 @@
             android:id="@+id/home_toolbar"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/white"
-
-            >
+            android:background="@color/color8">
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/petty"
-                    android:layout_alignParentLeft="true"/>
 
+                <TextView
+                    android:id="@+id/hello"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/thaibold"
+                    android:text="PETTYHUB"
+                    android:textColor="@color/color7"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="23dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.023"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.854" />
                 <ImageButton
                     android:id="@+id/noti_fragment_home"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-
                     android:layout_centerInParent="true"
                     android:layout_marginRight="17dp"
                     android:backgroundTint="#00FFFFFF"
@@ -49,20 +57,26 @@
                     android:backgroundTint="#00FFFFFF"
                     android:src="@drawable/searchs" />
             </RelativeLayout>
-
         </androidx.appcompat.widget.Toolbar>
-
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/home_recycler"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/app_bar_layout"
+        android:layout_marginTop="2dp"
+        android:background="@color/white"
+        app:tabGravity="fill"
+        app:tabMode="fixed" />
+
+
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/app_bar_layout"
-        android:background="#FFFFFF">
-
-
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_below="@id/tab_layout" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addPost"
@@ -72,14 +86,11 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="308dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginBottom="56dp"
+        android:layout_marginStart="333dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="33dp"
         android:background="#00FFFFFF"
         android:src="@drawable/add"
-        app:backgroundTint="@color/brown"
-        app:fabSize="normal">
-
-    </com.google.android.material.floatingactionbutton.FloatingActionButton>
-
+        app:backgroundTint="@color/color7"
+        app:fabSize="normal" />
 </RelativeLayout>

@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:shape="rectangle"
     tools:ignore="ExtraText">
-    <solid android:color="@android:color/white" /> <!-- สีพื้นหลัง -->
+    <solid android:color="@color/color8" />
     <stroke
-        android:width="2dp" />
-    android:color="#886B59" /> <!-- สีของเส้นกรอบ -->
-    <corners android:radius="20dp" /> <!-- รัศมีมุมขอบ -->
+        android:width="2dp"
+        android:color="@color/color8" />
+    <corners android:radius="20dp" />
 </shape>

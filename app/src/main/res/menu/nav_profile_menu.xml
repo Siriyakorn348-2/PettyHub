@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/profile_group">
+        <item
+            android:id="@+id/nav_editpro"
+            android:icon="@drawable/pen"
+            android:title="แก้ไขโปรไฟล์" />
+        <item
+            android:id="@+id/nav_change_password"
+            android:icon="@drawable/ic_lock"
+            android:title="เปลี่ยนรหัสผ่าน" />
+    </group>
+
+    <item
+        android:id="@+id/nav_about"
+        android:icon="@drawable/ic_about"
+        android:title="เกี่ยวกับแอป" />
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/logout"
+    android:title="ออกจากระบบ" />
+</menu>

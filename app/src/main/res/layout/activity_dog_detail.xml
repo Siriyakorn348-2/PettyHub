@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="291dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/dog" />
+        android:src="@drawable/dogdog" />
 
     <TextView
         android:id="@+id/nameDog"
@@ -29,16 +29,16 @@
         android:id="@+id/breedDog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Breed: Labrador"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="4dp"
+        android:text="Breed : คอลลี่"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/ageDog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Age: 3 years"
+        android:text="Age : 3 years"
         android:textSize="16sp" />
 
     <TextView
@@ -46,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Age: 3 years"
+        android:text="Sex : male "
         android:textSize="16sp" />
 
     <!-- Add more TextViews or other views to display additional information -->

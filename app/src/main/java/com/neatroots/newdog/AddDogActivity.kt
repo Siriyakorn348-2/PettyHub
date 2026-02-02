@@ -1,145 +1,152 @@
 package com.neatroots.newdog
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.StorageTask
-import com.google.firebase.storage.UploadTask
-import com.neatroots.newdog.Fragments.ProfileFragment
+import com.neatroots.newdog.Model.Dog
 import com.neatroots.newdog.R
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class AddDogActivity : AppCompatActivity() {
-    private var mAuth: FirebaseAuth? = null
-
-    private var myUrl = ""
     private var imageUri: Uri? = null
     private var storageDogPicRef: StorageReference? = null
+    private var myUrl: String = ""
+    private lateinit var progressDialog: ProgressDialog
+    private var selectedBirthDate: Long = 0
 
-    var addDog_save: Button? = null
-    var nameDog: TextView? = null
-    var dog_age: TextView? = null
-    var dog_grender: TextView? = null
-    var image_dog: CircleImageView? = null
-    var add_image_dog: ImageButton? = null
-    var delete_dog: Button? = null
-    val GALLERY_PICK = 1
+    private lateinit var addDogSave: Button
+    private lateinit var nameDog: TextView
+    private lateinit var dogBirthDate: TextView
+    private lateinit var imageDog: CircleImageView
+    private lateinit var addImageDog: ImageButton
+    private lateinit var backImgAddDog: ImageButton
+    private lateinit var sexDog: AutoCompleteTextView
+    private lateinit var breedDog: AutoCompleteTextView
 
-    lateinit var sex_Dog: AutoCompleteTextView
-    lateinit var breed_Dog: AutoCompleteTextView
-    var back_img_addDog: ImageButton? = null
+    companion object {
+        const val GALLERY_PICK = 1
+    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_dog)
-        init()
 
-        //เพศ
-        val sex_dog = arrayOf(
-            "male ",
-            "female "
-        )
-
-        // กำหนดค่า AutoCompleteTextView
-        sex_Dog = findViewById(R.id.sexAutoComplete)
-
-        val adapter_sex = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sex_dog)
-        sex_Dog.setAdapter(adapter_sex)
-
-        // รายการสายพันธุ์ของสุนัข
-        val breedDog = arrayOf(
-            "อลาสกัน มาลามิวท์ ",
-            "คอลลี่ ",
-            "ไซบีเรียน ฮัสกี้ ",
-            "ชามอย ",
-            "อัลเซเชี่ยล",
-            "ดัลเมเชี่ยน ",
-            "อเมริกัน พิทบูล เทอร์เรีย ",
-            "โกลเด้น รีทรีฟเวอร์ ",
-            "อเมริกัน บลูด็อก ",
-            "บางแก้ว ",
-            "ชิบะ อินุ ",
-            "ชิวาวา ",
-            "ปอมเมอเรเนียน ",
-            "ปั๊ก ",
-            "คอร์กี้ "
-        )
+        initViews()
         storageDogPicRef = FirebaseStorage.getInstance().reference.child("Dogs Pictures")
-
-        addDog_save?.setOnClickListener {
-            addDog()
+        progressDialog = ProgressDialog(this).apply {
+            setMessage("กำลังบันทึก...")
+            setCancelable(false)
         }
 
-        // กำหนดค่า AutoCompleteTextView
-        breed_Dog = findViewById(R.id.breedAutoComplete)
+        // Setup gender dropdown
+        val sexOptions = arrayOf("เพศผู้", "เพศเมีย")
+        val sexAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sexOptions)
+        sexDog.setAdapter(sexAdapter)
 
-        // สร้าง ArrayAdapter โดยใช้รายการสายพันธุ์ของสุนัขและเลเอาท์ AutoCompleteTextView ตามค่าเริ่มต้น
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, breedDog)
+        // Setup breed dropdown
+        val breedOptions = arrayOf(
+            "อลาสกัน มาลามิวท์", "คอลลี่", "ไซบีเรียน ฮัสกี้", "ชามอย", "อัลเซเชี่ยล",
+            "ดัลเมเชี่ยน", "อเมริกัน พิทบูล เทอร์เรีย", "โกลเด้น รีทรีฟเวอร์", "อเมริกัน บลูด็อก",
+            "บางแก้ว", "ชิบะ อินุ", "ชิวาวา", "ปอมเมอเรเนียน", "ปั๊ก", "คอร์กี้"
+        )
+        val breedAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, breedOptions)
+        breedDog.setAdapter(breedAdapter)
 
-        // กำหนด Adapter ให้กับ AutoCompleteTextView
-        breed_Dog.setAdapter(adapter)
+        // Setup DatePicker for birth date
+        dogBirthDate.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        add_image_dog?.setOnClickListener {
+            val datePickerDialog = DatePickerDialog(
+                this,
+                { _, selectedYear, selectedMonth, selectedDay ->
+                    val selectedCalendar = Calendar.getInstance()
+                    selectedCalendar.set(selectedYear, selectedMonth, selectedDay)
+                    selectedBirthDate = selectedCalendar.timeInMillis
+                    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    dogBirthDate.text = dateFormat.format(selectedCalendar.time)
+                },
+                year,
+                month,
+                day
+            )
+            datePickerDialog.datePicker.maxDate = System.currentTimeMillis() // จำกัดไม่ให้เลือกวันในอนาคต
+            datePickerDialog.show()
+        }
+
+        // Button listeners
+        addImageDog.setOnClickListener {
             val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             galleryIntent.type = "image/*"
             startActivityForResult(galleryIntent, GALLERY_PICK)
         }
 
-        back_img_addDog?.setOnClickListener { onBackPressed() }
+        addDogSave.setOnClickListener {
+            addDog()
+        }
+
+        backImgAddDog.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun initViews() {
+        addDogSave = findViewById(R.id.save_add)
+        nameDog = findViewById(R.id.adddog_name)
+        dogBirthDate = findViewById(R.id.dog_age)
+        imageDog = findViewById(R.id.image_dog)
+        addImageDog = findViewById(R.id.add_image_dag)
+        backImgAddDog = findViewById(R.id.back_image_add)
+        sexDog = findViewById(R.id.sexAutoComplete)
+        breedDog = findViewById(R.id.breedAutoComplete)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == GALLERY_PICK && resultCode == RESULT_OK) {
-            val selectedImage: Uri? = data?.data
-
-            if (selectedImage != null) {
-                // ใช้ Picasso ในการแสดงรูปภาพที่เลือก
-                Picasso.get().load(selectedImage).into(image_dog)
-            }
-
-            imageUri = selectedImage
-            // ไม่ต้อง upload ทันที ให้ upload เมื่อกดบันทึก
+        if (requestCode == GALLERY_PICK && resultCode == RESULT_OK && data != null) {
+            imageUri = data.data
+            Picasso.get().load(imageUri).into(imageDog)
         }
     }
 
     private fun addDog() {
+        val dogNameText = nameDog.text.toString().trim()
+        val breedText = breedDog.text.toString().trim()
+        val birthDateText = dogBirthDate.text.toString().trim()
+        val genderText = sexDog.text.toString().trim()
+
         when {
-            TextUtils.isEmpty(nameDog?.text.toString()) ->
-                Toast.makeText(this, "Please write dog name", Toast.LENGTH_LONG).show()
-            TextUtils.isEmpty(breed_Dog?.text.toString()) ->
-                Toast.makeText(this, "Please write breed Dog", Toast.LENGTH_LONG).show()
+            TextUtils.isEmpty(dogNameText) -> Toast.makeText(this, "กรุณาใส่ชื่อสุนัข", Toast.LENGTH_SHORT).show()
+            TextUtils.isEmpty(breedText) -> Toast.makeText(this, "กรุณาเลือกสายพันธุ์", Toast.LENGTH_SHORT).show()
+            TextUtils.isEmpty(birthDateText) -> Toast.makeText(this, "กรุณาเลือกวันเกิด", Toast.LENGTH_SHORT).show()
+            TextUtils.isEmpty(genderText) -> Toast.makeText(this, "กรุณาเลือกเพศ", Toast.LENGTH_SHORT).show()
             else -> {
-                // ย้าย uploadImageToFirebaseStorage() ไปในส่วนนี้
+                progressDialog.show()
+                addDogSave.isEnabled = false
                 uploadImageToFirebaseStorage()
             }
         }
@@ -147,79 +154,96 @@ class AddDogActivity : AppCompatActivity() {
 
     private fun uploadImageToFirebaseStorage() {
         if (imageUri != null) {
-            val filePath = storageDogPicRef?.child(System.currentTimeMillis().toString() + ".jpg")
-
-            filePath?.putFile(imageUri!!)
-                ?.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        filePath.downloadUrl.addOnSuccessListener { uri ->
-                            myUrl = uri.toString()
-                            saveDogToDatabase()
-                        }
-                    } else {
-                        Toast.makeText(
-                            this@AddDogActivity,
-                            "Failed to upload image.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+            val filePath = storageDogPicRef?.child("${System.currentTimeMillis()}.jpg")
+            filePath?.putFile(imageUri!!)?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    filePath.downloadUrl.addOnSuccessListener { uri ->
+                        myUrl = uri.toString()
+                        saveDogToDatabase()
+                    }.addOnFailureListener {
+                        progressDialog.dismiss()
+                        addDogSave.isEnabled = true
+                        Toast.makeText(this, "ไม่สามารถรับ URL รูปภาพได้", Toast.LENGTH_SHORT).show()
                     }
+                } else {
+                    progressDialog.dismiss()
+                    addDogSave.isEnabled = true
+                    Toast.makeText(this, "อัปโหลดรูปภาพล้มเหลว", Toast.LENGTH_SHORT).show()
                 }
+            }
         } else {
-            // ถ้าไม่มีการเลือกรูปภาพ
+            myUrl = ""
             saveDogToDatabase()
         }
     }
 
-    private fun saveDogToDatabase() {
+    private fun calculateAge(birthDate: Long): String {
+        if (birthDate == 0L) return "ไม่ระบุ"
 
-        val dogsRef = FirebaseDatabase.getInstance().reference
-            .child("Dogs")
+        val currentTime = Calendar.getInstance()
+        val birthTime = Calendar.getInstance().apply { timeInMillis = birthDate }
 
-        val dogId = dogsRef.push().key
-        val dogMap = HashMap<String, Any>()
-        dogMap["postid"] = dogId.toString()
-        dogMap["dogname"] = nameDog?.text.toString().toLowerCase()
-        dogMap["breed"] = breed_Dog?.text.toString()
-        dogMap["age"] = dog_age?.text.toString()
-        dogMap["grender"] = sex_Dog?.text.toString()
-        dogMap["dogimg"] = myUrl
-        dogMap["userid"] = FirebaseAuth.getInstance().currentUser!!.uid
+        var years = currentTime.get(Calendar.YEAR) - birthTime.get(Calendar.YEAR)
+        var months = currentTime.get(Calendar.MONTH) - birthTime.get(Calendar.MONTH)
+        val daysInMonth = currentTime.getActualMaximum(Calendar.DAY_OF_MONTH)
+        var days = currentTime.get(Calendar.DAY_OF_MONTH) - birthTime.get(Calendar.DAY_OF_MONTH)
 
-        if (dogId != null) {
-            dogsRef.child(dogId).setValue(dogMap)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
+        if (days < 0) {
+            months--
+            days += daysInMonth
+        }
+        if (months < 0) {
+            years--
+            months += 12
+        }
 
-                        Toast.makeText(this, "Dog added successfully", Toast.LENGTH_LONG).show()
-                        val intent = Intent(this@AddDogActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        Toast.makeText(
-                            this,
-                            "Failed to add dog. Please try again.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
+        return when {
+            years > 0 -> "$years ปี $months เดือน"
+            months > 0 -> "$months เดือน $days วัน"
+            else -> "$days วัน"
         }
     }
 
-    fun init() {
-        back_img_addDog = findViewById(R.id.back_image_add)
+    private fun saveDogToDatabase() {
+        val dogsRef = FirebaseDatabase.getInstance().reference.child("Dogs")
+        val dogId = dogsRef.push().key ?: return
 
-        addDog_save = findViewById(R.id.save_add)
-        delete_dog = findViewById(R.id.delete_dog)
+        val dogAge = calculateAge(selectedBirthDate) // คำนวณอายุ
+        val dog = Dog(
+            dogId = dogId,
+            dogName = nameDog.text.toString().trim(),
+            dogImage = myUrl,
+            dogBreed = breedDog.text.toString().trim(),
+            dogAge = dogAge,
+            dogGender = sexDog.text.toString().trim(),
+            userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        )
 
-        image_dog = findViewById(R.id.image_dog)
-        add_image_dog = findViewById(R.id.add_image_dag)
-        nameDog = findViewById(R.id.adddog_name)
-        dog_age = findViewById(R.id.dog_age)
-        // dog_grender = findViewById(R.id.dog_grender)
-    }
+        // บันทึกข้อมูลทั้งหมดรวมถึง dogBirthDate ในคราวเดียว
+        val dogData = hashMapOf<String, Any>(
+            "dogId" to dogId,
+            "dogName" to dog.getDogName(),
+            "dogImage" to myUrl,
+            "dogBreed" to dog.getDogBreed(),
+            "dogAge" to dogAge,
+            "dogGender" to dog.getDogGender(),
+            "userId" to (FirebaseAuth.getInstance().currentUser?.uid ?: ""),
+            "dogBirthDate" to selectedBirthDate
+        )
 
-    companion object {
-        const val GALLERY_PICK = 1
+        Log.d("AddDogActivity", "Saving dog to Firebase: ID=${dog.getDogId()}, Name=${dog.getDogName()}, Age=$dogAge, BirthDate=$selectedBirthDate")
+
+        dogsRef.child(dogId).setValue(dogData).addOnCompleteListener { task ->
+            progressDialog.dismiss()
+            addDogSave.isEnabled = true
+            if (task.isSuccessful) {
+                Log.d("AddDogActivity", "Dog added successfully with ID: $dogId")
+                Toast.makeText(this, "เพิ่มสุนัขสำเร็จ", Toast.LENGTH_SHORT).show()
+                finish()
+            } else {
+                Log.e("AddDogActivity", "Failed to add dog: ${task.exception?.message}")
+                Toast.makeText(this, "เพิ่มสุนัขล้มเหลว: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
-

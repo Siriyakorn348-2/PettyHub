@@ -14,7 +14,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
@@ -25,245 +24,191 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.neatroots.newdog.Model.User
 import com.squareup.picasso.Picasso
 
 class AccountActivity : AppCompatActivity() {
 
-    private lateinit var profileId: String
     private lateinit var firebaseUser: FirebaseUser
-    var back_acc_edit: ImageButton? = null
-    private lateinit var profile_fragment_username: TextInputEditText
+    private lateinit var storageProfilePicRef: StorageReference
 
-    private lateinit var email_acc: TextInputEditText
-    private lateinit var password_acc: TextInputEditText
-    private lateinit var profile_Image: ImageView
-    private lateinit var save_btn_acc: Button
-    var change_img_text_btn: TextView? = null
+    private lateinit var backAccEdit: ImageButton
+    private lateinit var profileFragmentUsername: TextInputEditText
+    private lateinit var profileImage: ImageView
+    private lateinit var saveBtnAcc: Button
+    private lateinit var changeImgTextBtn: TextView
 
-    val STORAGE_REQUEST = 200
     private var checker = ""
     private var myUrl = ""
-    var imageUri: Uri? = null
-    var storagePermission : ArrayList<String>? = null
-    private var storageProfilePicRef: StorageReference? = null
+    private var imageUri: Uri? = null
 
-    val GALLERY_PICK = 1
-
+    private val GALLERY_PICK = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account)
         init()
-        //userInfo()
 
-
-
-        firebaseUser = FirebaseAuth.getInstance().currentUser!!
+        firebaseUser = FirebaseAuth.getInstance().currentUser ?: run {
+            Log.e("AccountActivity", "FirebaseUser is null")
+            finish()
+            return
+        }
 
         storageProfilePicRef = FirebaseStorage.getInstance().reference.child("Profile Pictures")
 
-        if (firebaseUser != null) {
-            userInfo()
-        } else {
-            Log.e("YourTag", "FirebaseUser is null")
-        }
+        userInfo()
 
-        back_acc_edit?.setOnClickListener {
+        backAccEdit.setOnClickListener {
             onBackPressed()
         }
 
-
-        change_img_text_btn?.setOnClickListener {
+        changeImgTextBtn.setOnClickListener {
             val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             galleryIntent.type = "image/*"
             startActivityForResult(galleryIntent, GALLERY_PICK)
         }
 
-
-
-
-        save_btn_acc.setOnClickListener {
+        saveBtnAcc.setOnClickListener {
             if (checker == "clicked") {
                 uploadImageAndUpdateInfo()
             } else {
                 updateUserInfoOnly()
             }
         }
-        userInfo()
     }
-
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == GALLERY_PICK && resultCode == RESULT_OK) {
-            val selectedImage: Uri? = data?.data
-
-            // ใช้ Picasso ในการแสดงรูปภาพที่เลือก
-            if (selectedImage != null) {
-                Picasso.get().load(selectedImage).into(profile_Image)
+        if (requestCode == GALLERY_PICK && resultCode == RESULT_OK && data != null) {
+            imageUri = data.data
+            imageUri?.let {
+                Picasso.get().load(it).into(profileImage)
+                checker = "clicked"
             }
-
-            // เก็บ Uri ไว้ในตัวแปร imageUri หากต้องการใช้งานต่อ
-            imageUri = selectedImage
-
-            // กำหนดค่า checker เพื่อบอกว่าผู้ใช้ได้ทำการเลือกรูปภาพใหม่
-            checker = "clicked"
         }
     }
 
-
-
-
-
-    private fun updateUserInfoOnly() {
-        when {
-            TextUtils.isEmpty(profile_fragment_username.text.toString()) ->
-                Toast.makeText(this, "Please write username", Toast.LENGTH_LONG).show()
-            email_acc.text.toString() == " " ->
-                Toast.makeText(this, "Please write email", Toast.LENGTH_LONG).show()
-            password_acc.text.toString() == "" ->
-                Toast.makeText(this, "Please write password", Toast.LENGTH_LONG).show()
-
-            else -> {
-                val usersRef = FirebaseDatabase.getInstance().getReference().child("Users")
-
-                val userMap = HashMap<String, Any>()
-                userMap["username"] = profile_fragment_username.text.toString().toLowerCase()
-                userMap["email"] = email_acc.text.toString().toLowerCase()
-                userMap["password"] = password_acc.text.toString()
-
-                usersRef.child(firebaseUser.uid).updateChildren(userMap)
-
-                Toast.makeText(
-                    this,
-                    "Account Information has been updated successfully", Toast.LENGTH_LONG).show()
-                val intent = Intent(this@AccountActivity, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
+    private fun init() {
+        backAccEdit = findViewById(R.id.back_acc)
+        profileFragmentUsername = findViewById(R.id.username_acc_input)
+        profileImage = findViewById(R.id.profile_Image)
+        saveBtnAcc = findViewById(R.id.save_btn_acc)
+        changeImgTextBtn = findViewById(R.id.change_img_text_btn)
     }
 
     private fun userInfo() {
-        Log.d("YourTag", "FirebaseUser in userInfo(): $firebaseUser")
-
-        val userRef =
-            FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.uid)
+        val userRef = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser.uid)
         userRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(pO: DataSnapshot) {
-                if (pO.exists()) {
-                    val user = pO.getValue<User>(User::class.java)
-                    Log.d("YourTag", "User Data: $user")
-                    if (user != null) {
-                        Picasso.get().load(user!!.getImage()).placeholder(R.drawable.user).into(profile_Image)
-                        profile_fragment_username.setText(user.getUsername())
-                        email_acc.setText(user.getEmail())
-                        password_acc.setText(user.getPassword())
-                    } else {
-                        Log.e("YourTag", "User object is null")
-                    }
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val user = snapshot.getValue(User::class.java)
+                    user?.let {
+                        Picasso.get().load(it.getImage()).placeholder(R.drawable.user).into(profileImage)
+                        profileFragmentUsername.setText(it.getUsername())
+                    } ?: Log.e("AccountActivity", "User object is null")
                 } else {
-                    Log.e("YourTag", "DataSnapshot is null or does not exist")
+                    Log.e("AccountActivity", "DataSnapshot does not exist")
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle onCancelled event if needed
+                Log.e("AccountActivity", "Database error: ${error.message}")
+                Toast.makeText(this@AccountActivity, "เกิดข้อผิดพลาดในการโหลดข้อมูล", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
+    private fun updateUserInfoOnly() {
+        if (TextUtils.isEmpty(profileFragmentUsername.text.toString())) {
+            Toast.makeText(this, "กรุณากรอกชื่อผู้ใช้", Toast.LENGTH_LONG).show()
+        } else {
+            // แสดง ProgressDialog
+            val progressDialog = ProgressDialog(this).apply {
+                setTitle("การตั้งค่าบัญชี")
+                setMessage("กรุณารอสักครู่ กำลังอัปเดตชื่อผู้ใช้...")
+                setCanceledOnTouchOutside(false) // ป้องกันการแตะนอกเพื่อยกเลิก
+                show()
+            }
 
-    fun init() {
-        back_acc_edit = findViewById(R.id.back_acc)
-        profile_fragment_username = findViewById(R.id.username_acc_input)
-        email_acc = findViewById(R.id.email_acc_input)
-        password_acc = findViewById(R.id.password_acc_input)
-        profile_Image = findViewById(R.id.profile_Image)
-        save_btn_acc = findViewById(R.id.save_btn_acc)
-        change_img_text_btn = findViewById(R.id.change_img_text_btn)
-    }
+            val usersRef = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser.uid)
+            val userMap = HashMap<String, Any>().apply {
+                put("username", profileFragmentUsername.text.toString().toLowerCase())
+            }
 
-    private fun uploadImageAndUpdateInfo() {
-        when {
-            TextUtils.isEmpty(profile_fragment_username.text.toString()) ->
-                Toast.makeText(this, "Please write username", Toast.LENGTH_LONG).show()
-            email_acc.text.toString() == " " ->
-                Toast.makeText(this, "Please write email", Toast.LENGTH_LONG).show()
-            password_acc.text.toString() == "" ->
-                Toast.makeText(this, "Please write password", Toast.LENGTH_LONG).show()
-            imageUri == null ->
-                Toast.makeText(this, "Please Select image", Toast.LENGTH_LONG).show()
-            else -> {
-                val progressDialog = ProgressDialog(this)
-                progressDialog.setTitle("Account Settings")
-                progressDialog.setMessage("Please wait, we are updating your profile ... ")
-                progressDialog.show()
+            usersRef.updateChildren(userMap).addOnCompleteListener { task ->
+                progressDialog.dismiss() // ปิด ProgressDialog เมื่อเสร็จสิ้น
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "อัปเดตชื่อผู้ใช้สำเร็จ", Toast.LENGTH_LONG).show()
 
-                val fileref = storageProfilePicRef!!.child("${firebaseUser.uid}.jpg")
-
-                val uploadTask: StorageTask<*>
-                uploadTask = fileref.putFile(imageUri!!)
-
-                uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                    if (task.isSuccessful) {
-                        task.exception?.let {
-                            throw it
-                            progressDialog.dismiss()
-                        }
+                    // ส่ง Intent โดยระบุให้ไปที่ ProfileFragment
+                    val intent = Intent(this, MainActivity::class.java).apply {
+                        putExtra("selectedNavItemId", R.id.nav_profile) // ระบุ ID ของ Bottom Navigation
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     }
-                    return@Continuation fileref.downloadUrl
-                }).addOnCompleteListener(OnCompleteListener<Uri> { task ->
-                    if (task.isSuccessful) {
-                        val downloadUri = task.result
-                        myUrl = downloadUri.toString()
-
-                        // เพิ่ม Log เพื่อตรวจสอบ URL
-                        Log.d("YourTag", "Downloaded URL: $myUrl")
-
-                        val userMap = HashMap<String, Any>()
-                        userMap["username"] = profile_fragment_username.text.toString().toLowerCase()
-                        userMap["email"] = email_acc.text.toString().toLowerCase()
-                        userMap["password"] = password_acc.text.toString()
-                        userMap["image"] = myUrl
-
-                        // แก้ไขโครงสร้าง ref เพื่ออัปเดตเฉพาะผู้ใช้ปัจจุบัน
-                        val ref = FirebaseDatabase.getInstance()
-                            .reference.child("Users").child(firebaseUser.uid)
-
-                        ref.updateChildren(userMap)
-                            .addOnCompleteListener { updateTask ->
-                                if (updateTask.isSuccessful) {
-                                    Toast.makeText(
-                                        this,
-                                        "Account Information has been updated successfully", Toast.LENGTH_LONG
-                                    ).show()
-                                    val intent = Intent(this@AccountActivity, MainActivity::class.java)
-                                    startActivity(intent)
-                                    finish()
-                                } else {
-                                    Toast.makeText(
-                                        this,
-                                        "Failed to update account information", Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                                progressDialog.dismiss()
-                            }
-                    } else {
-                        Log.e("YourTag", "Failed to download URL")
-                        progressDialog.dismiss()
-                    }
-                })
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(this, "อัปเดตชื่อผู้ใช้ไม่สำเร็จ", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
 
+    private fun uploadImageAndUpdateInfo() {
+        if (TextUtils.isEmpty(profileFragmentUsername.text.toString())) {
+            Toast.makeText(this, "กรุณากรอกชื่อผู้ใช้", Toast.LENGTH_LONG).show()
+        } else if (imageUri == null) {
+            Toast.makeText(this, "กรุณาเลือกรูปภาพ", Toast.LENGTH_LONG).show()
+        } else {
+            // แสดง ProgressDialog
+            val progressDialog = ProgressDialog(this).apply {
+                setTitle("การตั้งค่าบัญชี")
+                setMessage("กรุณารอสักครู่ กำลังอัปเดตโปรไฟล์ของคุณ...")
+                setCanceledOnTouchOutside(false)
+                show()
+            }
+
+            val fileRef = storageProfilePicRef.child("${firebaseUser.uid}.jpg")
+            fileRef.putFile(imageUri!!).continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let { throw it }
+                }
+                return@Continuation fileRef.downloadUrl
+            }).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    myUrl = task.result.toString()
+                    Log.d("AccountActivity", "Download URL: $myUrl")
+
+                    val userMap = HashMap<String, Any>().apply {
+                        put("username", profileFragmentUsername.text.toString().toLowerCase())
+                        put("image", myUrl)
+                    }
+
+                    FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser.uid)
+                        .updateChildren(userMap)
+                        .addOnCompleteListener { updateTask ->
+                            progressDialog.dismiss() // ปิด ProgressDialog เมื่อเสร็จสิ้น
+                            if (updateTask.isSuccessful) {
+                                Toast.makeText(this, "อัปเดตโปรไฟล์สำเร็จ", Toast.LENGTH_LONG).show()
+                                // ส่ง Intent โดยระบุให้ไปที่ ProfileFragment
+                                val intent = Intent(this, MainActivity::class.java).apply {
+                                    putExtra("selectedNavItemId", R.id.nav_profile)
+                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                }
+                                startActivity(intent)
+                                finish()
+                            } else {
+                                Toast.makeText(this, "อัปเดตโปรไฟล์ไม่สำเร็จ", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                } else {
+                    progressDialog.dismiss()
+                    Log.e("AccountActivity", "Failed to get download URL")
+                    Toast.makeText(this, "อัปโหลดรูปภาพไม่สำเร็จ", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
 }
-
-
-

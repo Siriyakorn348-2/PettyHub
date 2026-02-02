@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    android:background="@drawable/dialog_background"
+    android:layout_gravity="center"
+    android:layout_margin="16dp">
+
+    <!-- ชื่ออีเว้นท์ -->
+    <EditText
+        android:id="@+id/eventNameInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ชื่ออีเว้นท์"
+        android:padding="12dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="#B0B0B0"
+        android:background="@drawable/edit_text_background"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- เวลา -->
+    <EditText
+        android:id="@+id/eventTimeInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="เวลา"
+        android:focusable="false"
+        android:clickable="true"
+        android:padding="12dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="#B0B0B0"
+        android:background="@drawable/edit_text_background"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- คำอธิบาย -->
+    <EditText
+        android:id="@+id/eventDescriptionInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="คำอธิบาย (ไม่บังคับ)"
+        android:inputType="text"
+        android:padding="12dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="#B0B0B0"
+        android:background="@drawable/edit_text_background"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- สวิตช์การแจ้งเตือน -->
+    <Switch
+        android:id="@+id/notificationSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="แจ้งเตือน"
+        android:textSize="14sp"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- หัวข้อ Color -->
+    <TextView
+        android:id="@+id/colorLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Color"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="8dp" />
+
+
+    <LinearLayout
+        android:id="@+id/colorGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:id="@+id/colorRed"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/color_circle_red"
+            android:layout_marginEnd="16dp"
+            android:tag="red" />
+
+        <ImageView
+            android:id="@+id/colorGreen"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/color_selector_green"
+            android:layout_marginEnd="16dp"
+            android:tag="green" />
+
+        <ImageView
+            android:id="@+id/colorBlue"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/color_selector_blue"
+            android:layout_marginEnd="16dp"
+            android:tag="blue" />
+
+        <ImageView
+            android:id="@+id/colorYellow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/color_selector_yellow"
+            android:layout_marginEnd="16dp"
+            android:tag="yellow" />
+
+        <ImageView
+            android:id="@+id/colorPurple"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/color_selector_purple"
+            android:tag="purple" />
+    </LinearLayout>
+
+
+</LinearLayout>

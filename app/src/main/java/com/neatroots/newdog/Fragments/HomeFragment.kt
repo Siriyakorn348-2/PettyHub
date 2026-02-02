@@ -1,37 +1,38 @@
 package com.neatroots.newdog.Fragments
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.neatroots.newdog.AccountActivity
-import com.neatroots.newdog.Adapter.PostAdapter
 import com.neatroots.newdog.AddPostActivity
-import com.neatroots.newdog.BarProfileActivity
-import com.neatroots.newdog.Model.Post
 import com.neatroots.newdog.R
 
+class HomeFragment : Fragment() {
 
-class HomeFragment<T> : Fragment() {
-
-    private var postAdapter : PostAdapter? = null
-    private  var  postList : MutableList<Post>? = null
-    private var followingList :MutableList<Post>? = null
-
-
+    private lateinit var auth: FirebaseAuth
+    private lateinit var database: FirebaseDatabase
+    private var notificationCount = 0
+    private var notiListener: ValueEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,98 +40,199 @@ class HomeFragment<T> : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        val notibtn : View = view.findViewById(R.id.noti_fragment_home)
-        notibtn.setOnClickListener{
-            val fragment = NotificationsFragment() // เปลี่ยน YourFragment() เป็นคลาส Fragment ที่คุณต้องการเปิด
+        auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance()
+
+        // ตั้งค่าปุ่มแจ้งเตือน
+        val notiBtn: View = view.findViewById(R.id.noti_fragment_home)
+        notiBtn.setOnClickListener {
+            clearNotificationBadge() // ล้างสถานะแจ้งเตือนก่อนไปหน้าใหม่
+            val fragment = NotificationsFragment()
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_container, fragment)
             transaction.addToBackStack(null)
             transaction.commit()
         }
 
+        // ตั้งค่าปุ่มค้นหา
         val search: View = view.findViewById(R.id.search_fragment_home)
-        search.setOnClickListener{
-            val fragment = SearchFragment() // เปลี่ยน YourFragment() เป็นคลาส Fragment ที่คุณต้องการเปิด
+        search.setOnClickListener {
+            val fragment = SearchFragment()
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_container, fragment)
             transaction.addToBackStack(null)
             transaction.commit()
         }
+
+        // ตั้งค่าปุ่มเพิ่มโพสต์
         val addPost: FloatingActionButton = view.findViewById(R.id.addPost)
         addPost.setOnClickListener {
             val intent = Intent(requireContext(), AddPostActivity::class.java)
             startActivity(intent)
         }
 
+        // ตั้งค่า TabLayout และ ViewPager2
+        val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
+        val viewPager = view.findViewById<ViewPager2>(R.id.view_pager)
 
-        var recyclerView : RecyclerView? = null
-        recyclerView = view.findViewById(R.id.home_recycler)
-        val linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.reverseLayout = true
-        linearLayoutManager.stackFromEnd = true
-        recyclerView.layoutManager = linearLayoutManager
+        val adapter = HomePagerAdapter(this)
+        viewPager.adapter = adapter
 
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.setCustomView(R.layout.custom_tab)
+            val textView = tab.customView?.findViewById<TextView>(R.id.custom_text)
+            when (position) {
+                0 -> textView?.text = "สาธารณะ"
+                1 -> textView?.text = "กำลังติดตาม"
+            }
+        }.attach()
 
-        postList = ArrayList()
-        postAdapter = context?.let { PostAdapter(it,postList as ArrayList<Post>) }
-        recyclerView.adapter = postAdapter
-
-        checkFollowing()
+        // โหลดจำนวนแจ้งเตือน
+        retrieveNotifications(notiBtn as android.widget.ImageView)
 
         return view
     }
 
-    private fun checkFollowing() {
-        followingList = ArrayList()
+    override fun onResume() {
+        super.onResume()
+        val notiBtn = view?.findViewById<View>(R.id.noti_fragment_home) as? android.widget.ImageView
+        notiBtn?.let {
+            retrieveNotifications(it)
+        }
+    }
 
-        val followingRef = FirebaseDatabase.getInstance().reference
-            .child("Follow").child(FirebaseAuth.getInstance().currentUser!!.uid)
-            .child("Following")
+    override fun onDestroyView() {
+        super.onDestroyView()
+        notiListener?.let {
+            FirebaseDatabase.getInstance().reference
+                .child("Notifications")
+                .child(auth.currentUser?.uid ?: "")
+                .removeEventListener(it)
+        }
+    }
 
-        followingRef.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(pO: DataSnapshot)
-            {
-                if (pO.exists()){
-                    (followingList as ArrayList<String>).clear()
-                    for(snapshot in pO.children){
-                        snapshot.key?.let { (followingList as ArrayList<String>).add(it) }
+    private fun retrieveNotifications(notiButton: android.widget.ImageView) {
+        val userId = auth.currentUser?.uid ?: return
+        val notiRef = database.reference.child("Notifications").child(userId)
 
+        notiListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                notificationCount = 0
+                for (notiSnapshot in snapshot.children) {
+                    val notiData = notiSnapshot.value as? Map<String, Any>
+                    notiData?.let {
+                        val isRead = it["isRead"] as? Boolean ?: false
+                        Log.d("HomeFragment", "Notification: ID=${notiSnapshot.key}, Read=$isRead")
+                        if (!isRead) {
+                            notificationCount++
+                        }
                     }
-                    retrievePosts()
+                }
+                Log.d("HomeFragment", "Unread notifications count: $notificationCount")
+                if (isAdded) {
+                    updateNotificationBadge(notiButton)
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                Log.e("HomeFragment", "Failed to retrieve notifications: ${error.message}")
             }
-        })
+        }.also { listener ->
+            notiRef.addValueEventListener(listener)
+        }
     }
 
-    private fun retrievePosts() {
-        val postsRef = FirebaseDatabase.getInstance().reference.child("Posts")
+    private fun updateNotificationBadge(notiButton: android.widget.ImageView) {
+        val context = context ?: return
+        Log.d("HomeFragment", "Updating badge with count: $notificationCount")
+        if (notificationCount > 0) {
+            val iconDrawable = context.resources.getDrawable(R.drawable.noti, null)
+            val badgeSize = (16 * context.resources.displayMetrics.density).toInt()
+            val bitmap = Bitmap.createBitmap(badgeSize, badgeSize, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            val paint = Paint().apply {
+                color = Color.RED
+                style = Paint.Style.FILL
+                isAntiAlias = true
+            }
+            val radius = badgeSize / 2f
+            canvas.drawCircle(radius, radius, radius, paint)
+            val textPaint = Paint().apply {
+                color = Color.WHITE
+                textSize = 10 * context.resources.displayMetrics.density
+                textAlign = Paint.Align.CENTER
+                isAntiAlias = true
+            }
+            val countText = notificationCount.toString()
+            canvas.drawText(countText, radius, radius + textPaint.textSize / 3, textPaint)
+            val badgeDrawable = BitmapDrawable(context.resources, bitmap)
+            badgeDrawable.setBounds(0, 0, badgeSize, badgeSize)
+            val layeredDrawable = LayerDrawable(arrayOf(iconDrawable, badgeDrawable))
+            layeredDrawable.setLayerInset(1, iconDrawable.intrinsicWidth - badgeSize, 0, 0, iconDrawable.intrinsicHeight - badgeSize)
+            notiButton.setImageDrawable(layeredDrawable)
+        } else {
+            notiButton.setImageResource(R.drawable.noti)
+        }
+    }
 
-        postsRef.orderByChild("publisher").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                postList?.clear()
+    private fun clearNotificationBadge() {
+        val userId = auth.currentUser?.uid ?: return
+        val notiRef = database.reference.child("Notifications").child(userId)
 
-                for (snapshot in dataSnapshot.children) {
-                    Log.d("HomeFragment", "Snapshot: $snapshot")
-                    val post = snapshot.getValue(Post::class.java)
+        notiRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (!snapshot.exists()) {
+                    Log.d("HomeFragment", "No notifications to clear")
+                    notificationCount = 0
+                    if (isAdded) {
+                        val notiButton = view?.findViewById<View>(R.id.noti_fragment_home) as? android.widget.ImageView
+                        notiButton?.let { updateNotificationBadge(it) }
+                    }
+                    return
+                }
 
-                    if (post != null && (followingList as ArrayList<String>).contains(post.getPublisher())) {
-                        Log.d("HomeFragment", "Adding post: $post")
-                        postList!!.add(post)
+                val updates = mutableMapOf<String, Any>()
+                for (notiSnapshot in snapshot.children) {
+                    val notiData = notiSnapshot.value as? Map<String, Any>
+                    notiData?.let {
+                        val isRead = it["isRead"] as? Boolean ?: false
+                        if (!isRead) {
+                            updates["${notiSnapshot.key}/isRead"] = true
+                        }
                     }
                 }
 
-                postAdapter!!.notifyDataSetChanged()
+                if (updates.isNotEmpty()) {
+                    notiRef.updateChildren(updates)
+                        .addOnSuccessListener {
+                            Log.d("HomeFragment", "Notifications marked as read")
+                            notificationCount = 0
+                            if (isAdded) {
+                                val notiButton = view?.findViewById<View>(R.id.noti_fragment_home) as? android.widget.ImageView
+                                notiButton?.let { updateNotificationBadge(it) }
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("HomeFragment", "Failed to mark notifications as read: ${e.message}")
+                        }
+                }
             }
 
-            override fun onCancelled(databaseError: DatabaseError) {
-                // จัดการกรณีเกิดข้อผิดพลาด
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("HomeFragment", "Failed to clear notifications: ${error.message}")
             }
         })
     }
+}
 
+class HomePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+    override fun getItemCount(): Int = 2
 
+    override fun createFragment(position: Int): Fragment {
+        return when (position) {
+            0 -> PublicTabFragment()
+            1 -> FollowingTabFragment()
+            else -> throw IllegalStateException("Invalid position")
+        }
+    }
 }

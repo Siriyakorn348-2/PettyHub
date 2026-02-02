@@ -13,4 +13,9 @@
     <string name="ella_txt">Ella</string>
     <string name="follow_txt">Follow</string>
 
+    <string name="back"><![CDATA[<-]]></string>
+    <string name="forward"><![CDATA[->]]></string>
+
+    <string name="select_gender_prompt">เลือกเพศ</string>
+
 </resources>

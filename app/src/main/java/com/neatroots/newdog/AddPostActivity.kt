@@ -8,143 +8,182 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.google.android.gms.auth.api.signin.internal.Storage
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ServerValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.StorageTask
-import com.google.firebase.storage.UploadTask
-import com.squareup.picasso.Picasso
-import com.canhub.cropper.CropImage
-
-
 
 class AddPostActivity : AppCompatActivity() {
-    private var myUrl = ""
-    private var imageUri: Uri? = null
+    private val imageUris = mutableListOf<Uri>()
     private var storagePostPicRef: StorageReference? = null
+    private lateinit var imageRecyclerView: RecyclerView
+    private lateinit var imageAdapter: PostImageAdapter
 
-    var addPost: TextView? = null
-    var image_added : ImageView? = null
-    var description: TextView? = null
-    val GALLERY_PICK = 1
-    var close : ImageView? = null
+    private lateinit var addPost: TextView
+    private lateinit var description: EditText
+    private val GALLERY_PICK = 1
+    private lateinit var close: ImageView
+    private lateinit var addImageButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_post)
 
-
         storagePostPicRef = FirebaseStorage.getInstance().reference.child("Posts Pictures")
         description = findViewById(R.id.description)
-        image_added = findViewById(R.id.image_added)
+        imageRecyclerView = findViewById(R.id.image_added_recycler)
         addPost = findViewById(R.id.post)
         close = findViewById(R.id.close)
+        addImageButton = findViewById(R.id.add_image_button)
 
+        // ตั้งค่า RecyclerView
+        imageRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        imageAdapter = PostImageAdapter(imageUris) { position ->
+            imageUris.removeAt(position)
+            imageAdapter.notifyDataSetChanged()
+            if (imageUris.isEmpty()) imageRecyclerView.visibility = View.GONE
+        }
+        imageRecyclerView.adapter = imageAdapter
 
-        close?.setOnClickListener{
+        close.setOnClickListener {
             onBackPressed()
         }
 
-        image_added?.setOnClickListener {
-            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            galleryIntent.type = "image/*"
-            startActivityForResult(galleryIntent, GALLERY_PICK)
+        addImageButton.setOnClickListener {
+            if (imageUris.size < 10) {
+                val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                galleryIntent.type = "image/*"
+                startActivityForResult(galleryIntent, GALLERY_PICK)
+            } else {
+                Toast.makeText(this, "สามารถเพิ่มได้สูงสุด 10 รูป", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        addPost?.setOnClickListener {
-            uploadImage()
+        addPost.setOnClickListener {
+            uploadImages()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == GALLERY_PICK && resultCode == Activity.RESULT_OK) {
-            // รับ URI ของรูปภาพที่ผู้ใช้เลือก
-            imageUri = data?.data
-
-            image_added?.setImageURI(imageUri)
-        }
-    }
-
-
-    private fun uploadImage(){
-        when{
-            imageUri == null ->
-                Toast.makeText(this, "Please Select image", Toast.LENGTH_LONG).show()
-            TextUtils.isEmpty(description?.text.toString()) ->
-                Toast.makeText(this, "Please write description", Toast.LENGTH_LONG).show()
-            else->{
-                val progressDialog = ProgressDialog(this)
-                progressDialog.setTitle("Adding New Post")
-                progressDialog.setMessage("Please wait, we are adding your picture post ... ")
-                progressDialog.show()
-                val fileRef = storagePostPicRef!!.child(System.currentTimeMillis().toString()+"jpg")
-
-                val uploadTask : StorageTask<*>
-                uploadTask = fileRef.putFile(imageUri!!)
-
-                uploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot , Task<Uri>> { task ->
-                    if (task.isSuccessful){
-                        task.exception?.let {
-                            throw it
-                            progressDialog.dismiss()
-                        }
-                    }
-                    return@Continuation fileRef.downloadUrl
-
-                }).addOnCompleteListener (OnCompleteListener<Uri>{ task ->
-                    if (task.isSuccessful)
-                    {
-                        val downloadUri = task.result
-                        myUrl = downloadUri.toString()
-
-                        val ref = FirebaseDatabase.getInstance().reference.child("Posts")
-
-                        val postId = ref.push().key
-                        val postMap = HashMap<String, Any>()
-                        postMap["postid"] = postId!!
-                        postMap["description"] = description?.text.toString().toLowerCase()
-                        postMap["publisher"] = FirebaseAuth.getInstance().currentUser!!.uid
-                        postMap["postimage"] = myUrl
-                        postMap["publisherName"] = "" // ตั้งค่าเป็นค่าว่าง เนื่องจากจะดึงข้อมูลในภายหลัง
-                        postMap["publisherImage"] = "" // ตั้งค่าเป็นค่าว่าง เนื่องจากจะดึงข้อมูลในภายหลัง
-
-
-                        ref.child(postId).updateChildren(postMap)
-                        Toast.makeText(
-                            this,
-                            "Account Information has been updated successfully", Toast.LENGTH_LONG).show()
-                        val intent = Intent(this@AddPostActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                        progressDialog.dismiss()
-                    }
-                    else{
-                        progressDialog.dismiss()
-                        Toast.makeText(
-                            this@AddPostActivity,
-                            "Failed to add post. Please try again.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-
-                })
-
+        if (requestCode == GALLERY_PICK && resultCode == Activity.RESULT_OK && data != null) {
+            val uri = data.data
+            if (uri != null && imageUris.size < 10) {
+                imageUris.add(uri)
+                imageAdapter.notifyDataSetChanged()
+                imageRecyclerView.visibility = View.VISIBLE
+            } else if (imageUris.size >= 10) {
+                Toast.makeText(this, "ถึงขีดจำกัด 10 รูปแล้ว", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    private fun uploadImages() {
+        if (TextUtils.isEmpty(description.text.toString()) && imageUris.isEmpty()) {
+            Toast.makeText(this, "กรุณาเขียนโพสต์หรือเลือกภาพอย่างน้อยหนึ่งอย่าง", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setTitle("กำลังเพิ่มโพสต์ใหม่")
+        progressDialog.setMessage("กรุณารอสักครู่ เรากำลังเพิ่มโพสต์ของคุณ...")
+        progressDialog.show()
+
+        val ref = FirebaseDatabase.getInstance().reference.child("Posts")
+        val postId = ref.push().key ?: return
+        val postMap = HashMap<String, Any>()
+        postMap["postid"] = postId
+        postMap["description"] = description.text.toString()
+        postMap["publisher"] = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        postMap["publisherName"] = ""
+        postMap["publisherImage"] = ""
+        postMap["dateTime"] = ServerValue.TIMESTAMP
+
+        if (imageUris.isNotEmpty()) {
+            val imageUrls = mutableListOf<String>()
+            var uploadCount = 0
+
+            for (uri in imageUris) {
+                val fileRef = storagePostPicRef!!.child("${System.currentTimeMillis()}_${imageUris.indexOf(uri)}.jpg")
+                val uploadTask = fileRef.putFile(uri)
+
+                uploadTask.continueWithTask { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.let { throw it }
+                    }
+                    fileRef.downloadUrl
+                }.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        imageUrls.add(task.result.toString())
+                        uploadCount++
+                        if (uploadCount == imageUris.size) {
+                            postMap["postImages"] = imageUrls
+                            savePost(ref, postId, postMap, progressDialog)
+                        }
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(this, "ไม่สามารถอัปโหลดรูปภาพบางรูปได้", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        } else {
+            postMap["postImages"] = emptyList<String>()
+            savePost(ref, postId, postMap, progressDialog)
+        }
+    }
+
+    private fun savePost(ref: DatabaseReference, postId: String, postMap: HashMap<String, Any>, progressDialog: ProgressDialog) {
+        ref.child(postId).setValue(postMap)
+            .addOnCompleteListener { dbTask ->
+                progressDialog.dismiss()
+                if (dbTask.isSuccessful) {
+                    Toast.makeText(this, "โพสต์สำเร็จแล้ว", Toast.LENGTH_LONG).show()
+                    val intent = Intent(this, MainActivity::class.java).apply {
+                        putExtra("navigateTo", "HomeFragment")
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    }
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(this, "ไม่สามารถโพสต์ได้: ${dbTask.exception?.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+    }
+}
+
+class PostImageAdapter(
+    private val imageUris: MutableList<Uri>,
+    private val onRemoveClick: (Int) -> Unit
+) : RecyclerView.Adapter<PostImageAdapter.ViewHolder>() {
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imageView: ImageView = itemView.findViewById(R.id.post_image_item)
+        val removeButton: ImageView = itemView.findViewById(R.id.remove_image)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_post_image, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.imageView.setImageURI(imageUris[position])
+        holder.removeButton.setOnClickListener {
+            onRemoveClick(position)
+        }
+    }
+
+    override fun getItemCount(): Int = imageUris.size
 }

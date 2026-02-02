@@ -10,17 +10,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.neatroots.newdog.AppDatabase
 import com.neatroots.newdog.CategoryActivity
-import com.neatroots.newdog.Petdata
+import com.neatroots.newdog.DataAdapter
+import com.neatroots.newdog.DogData
 
-import com.neatroots.newdog.R
-import com.neatroots.newdog.RecommendAdapter
-import com.neatroots.newdog.SearchActivity
+import com.neatroots.newdog.SearchDataActivity
 import com.neatroots.newdog.databinding.FragmentIdeaBinding
 
 class IdeaFragment : Fragment() {
     private lateinit var binding: FragmentIdeaBinding
-    private lateinit var rvAdapter: RecommendAdapter
-    private lateinit var dataList: ArrayList<Petdata>
+    private lateinit var rvAdapter: DataAdapter
+    private lateinit var dataList: ArrayList<DogData>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,57 +31,56 @@ class IdeaFragment : Fragment() {
 
         setUpRecyclerView()
 
-        binding.searchTxt.setOnClickListener {
-            startActivity(Intent(activity, SearchActivity::class.java))
-        }
 
-        binding.health.setOnClickListener {
-            var myIntent = Intent(activity, CategoryActivity::class.java)
-            myIntent.putExtra("TITLE", "สุขภาพ")
-            myIntent.putExtra("CATEGORY", "สุขภาพ")
-            startActivity(myIntent)
+        binding.search.setOnClickListener{
+            startActivity(Intent(activity, SearchDataActivity::class.java))
         }
-
-        binding.care.setOnClickListener {
-            var myIntent = Intent(activity, CategoryActivity::class.java)
-            myIntent.putExtra("TITLE", "การดูแล")
-            myIntent.putExtra("CATEGORY", "การดูแล")
+        binding.dogCare.setOnClickListener {
+            var myIntent = Intent(activity,CategoryActivity::class.java)
+            myIntent.putExtra("TITLE","การดูแล")
+            myIntent.putExtra("CATEGORY","การดูแล")
             startActivity(myIntent)
         }
 
         binding.food.setOnClickListener {
-            var myIntent = Intent(activity, CategoryActivity::class.java)
-            myIntent.putExtra("TITLE", "อาหาร")
-            myIntent.putExtra("CATEGORY", "อาหาร")
+            var myIntent = Intent(activity,CategoryActivity::class.java)
+            myIntent.putExtra("TITLE","อาหาร")
+            myIntent.putExtra("CATEGORY","อาหาร")
             startActivity(myIntent)
         }
-
         binding.lifeStyle.setOnClickListener {
-            var myIntent = Intent(activity, CategoryActivity::class.java)
-            myIntent.putExtra("TITLE", "ไลฟ์สไตล์")
-            myIntent.putExtra("CATEGORY", "ไลฟ์สไตล์")
+            var myIntent = Intent(activity,CategoryActivity::class.java)
+            myIntent.putExtra("TITLE","ไลฟ์สไตล์")
+            myIntent.putExtra("CATEGORY","ไลฟ์สไตล์")
             startActivity(myIntent)
         }
-
+        binding.hospital.setOnClickListener {
+            var myIntent = Intent(activity,CategoryActivity::class.java)
+            myIntent.putExtra("TITLE","โรงพยาบาล")
+            myIntent.putExtra("CATEGORY","โรงพยาบาล")
+            startActivity(myIntent)
+        }
         return view
+
     }
 
     private fun setUpRecyclerView() {
         dataList = ArrayList()
 
-        binding.rvRecommend.layoutManager = LinearLayoutManager(activity)
+        binding.rvData.layoutManager = LinearLayoutManager(activity)
         var db = Room.databaseBuilder(requireContext(), AppDatabase::class.java, "db_name")
             .allowMainThreadQueries()
             .fallbackToDestructiveMigration()
-            .createFromAsset("petdata.db")
+            .createFromAsset("datadog.db")
             .build()
 
         var daoObject = db.getDao()
-        var petdatas = daoObject.getAll()
-        for (i in petdatas!!.indices) {
-            dataList.add(petdatas[i]!!)
-            rvAdapter = RecommendAdapter(dataList, requireContext())
-            binding.rvRecommend.adapter = rvAdapter
+        var datas =daoObject.getAll()
+        for (i in datas!!.indices){
+            dataList.add(datas[i]!!)
+            rvAdapter = DataAdapter(dataList, requireContext())
+            binding.rvData.adapter = rvAdapter
+
         }
     }
 }

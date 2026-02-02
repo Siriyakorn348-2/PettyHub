@@ -1,15 +1,14 @@
 package com.neatroots.newdog
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -18,11 +17,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
 import com.neatroots.newdog.Adapter.CommentAdapter
-import com.neatroots.newdog.Fragments.HomeFragment
+import com.neatroots.newdog.Adapter.PostImagesAdapter
 import com.neatroots.newdog.Model.Comment
+import com.neatroots.newdog.Model.Post
 import com.neatroots.newdog.Model.User
+import com.neatroots.newdog.Fragments.ProfileFragment
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -30,17 +30,20 @@ class CommentsActivity : AppCompatActivity() {
 
     private var postId = ""
     private var publisherId = ""
-    private  var firebaseUser : FirebaseUser? = null
-    private var commentAdapter : CommentAdapter? = null
-    private var commmentList : MutableList<Comment>? = null
+    private var firebaseUser: FirebaseUser? = null
+    private var commentAdapter: CommentAdapter? = null
+    private var commentList: MutableList<Comment>? = null
+    private var postImagesAdapter: PostImagesAdapter? = null
 
-    var add_comment:EditText? = null
-    var post_image_comment : ImageView? = null
-    var profile_image_comment: CircleImageView? = null
-    var post_comment: TextView? = null
-
-    var back : ImageButton? =null
-
+    private var addCommentEditText: EditText? = null
+    private var postImagesRecyclerView: RecyclerView? = null
+    private var postTextView: TextView? = null
+    private var profileImageView: CircleImageView? = null
+    private var userNameTextView: TextView? = null
+    private var postTimeTextView: TextView? = null
+    private var postCommentButton: TextView? = null
+    private var backButton: ImageButton? = null
+    private var imageIndicator: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,34 +55,47 @@ class CommentsActivity : AppCompatActivity() {
         publisherId = intent.getStringExtra("publisherId").toString()
         firebaseUser = FirebaseAuth.getInstance().currentUser
 
-        var recyclerView : RecyclerView
-        recyclerView = findViewById(R.id.comments_recycler)
-        val  linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.reverseLayout  = true
+        val recyclerView: RecyclerView = findViewById(R.id.comments_recycler)
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.reverseLayout = true
         recyclerView.layoutManager = linearLayoutManager
 
-
-        back =findViewById(R.id.back_btn)
-        back!!.setOnClickListener {
-            startActivity(Intent(this, HomeFragment::class.java))
+        backButton = findViewById(R.id.back_btn)
+        backButton!!.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                putExtra("navigateTo", "HomeFragment")
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            }
+            startActivity(intent)
+            finish()
         }
 
-        commmentList = ArrayList()
-        commentAdapter = CommentAdapter(this, commmentList as ArrayList<Comment>)
+        commentList = ArrayList()
+        commentAdapter = CommentAdapter(this, commentList as ArrayList<Comment>)
         recyclerView.adapter = commentAdapter
 
         userInfo()
         readComments()
-        getPostImage()
+        getPostDetails()
 
-        post_comment?.setOnClickListener(View.OnClickListener {
-            if (add_comment!!.text.toString() == "") {
-                Toast.makeText(this@CommentsActivity,"Please write comment first...",Toast.LENGTH_LONG).show()
-            } else{
+        postCommentButton?.setOnClickListener {
+            if (addCommentEditText!!.text.toString() == "") {
+                Toast.makeText(this@CommentsActivity, "กรุณาเขียนคอมเม้นต์ก่อน...", Toast.LENGTH_LONG).show()
+            } else {
                 addComment()
             }
-        })
+        }
+    }
 
+    private fun init() {
+        addCommentEditText = findViewById(R.id.add_comment)
+        postImagesRecyclerView = findViewById(R.id.post_images_recycler)
+        postTextView = findViewById(R.id.description)
+        profileImageView = findViewById(R.id.user_profile_image_post)
+        userNameTextView = findViewById(R.id.user_name_post)
+        postTimeTextView = findViewById(R.id.post_time)
+        postCommentButton = findViewById(R.id.post_comment)
+        imageIndicator = findViewById(R.id.image_indicator)
     }
 
     private fun addComment() {
@@ -87,129 +103,193 @@ class CommentsActivity : AppCompatActivity() {
             .child("Comments")
             .child(postId)
 
-        // Check if the comment is not empty
-        val commentText = add_comment!!.text.toString()
+        val commentText = addCommentEditText!!.text.toString()
         if (commentText.isNotBlank()) {
-            // Generate a unique comment id
             val commentId = commentsRef.push().key
-
-            // Create a map for the new comment
+            val timestamp = System.currentTimeMillis()
             val commentsMap = HashMap<String, Any>()
             commentsMap["comment"] = commentText
             commentsMap["publisher"] = firebaseUser!!.uid
-            commentsMap["commentid"] = commentId!!
+            commentsMap["commentId"] = commentId!!
+            commentsMap["postId"] = postId
+            commentsMap["timestamp"] = timestamp
 
-            // Add the new comment
             commentsRef.child(commentId).setValue(commentsMap)
-
-            // Clear the input field
-            add_comment!!.text.clear()
-
-            // Add notification
-            addNotification()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        addCommentEditText!!.text.clear()
+                        if (publisherId != firebaseUser!!.uid) {
+                            addNotification(timestamp)
+                        }
+                    } else {
+                        Toast.makeText(this@CommentsActivity, "ไม่สามารถเพิ่มคอมเม้นต์ได้", Toast.LENGTH_LONG).show()
+                    }
+                }
         } else {
-            Toast.makeText(this@CommentsActivity, "Please write a non-empty comment", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@CommentsActivity, "กรุณาเขียนคอมเม้นต์ที่ไม่ว่างเปล่า", Toast.LENGTH_LONG).show()
         }
     }
 
     private fun userInfo() {
-        Log.d("YourTag", "FirebaseUser in userInfo(): $firebaseUser")
-
-        val userRef =
-            FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
+        val userRef = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
         userRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(pO: DataSnapshot) {
-                if (pO.exists()) {
-                    val user = pO.getValue<User>(User::class.java)
-                    Log.d("YourTag", "User Data: $user")
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val user = snapshot.getValue(User::class.java)
                     if (user != null) {
-                        Picasso.get().load(user!!.getImage()).placeholder(R.drawable.user).into(profile_image_comment)
-
-
-                    } else {
-                        Log.e("YourTag", "User object is null")
+                        Picasso.get().load(user.getImage()).placeholder(R.drawable.user).into(profileImageView)
                     }
-                } else {
-                    Log.e("YourTag", "DataSnapshot is null or does not exist")
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle onCancelled event if needed
+                Log.e("CommentsActivity", "Failed to load user info: ${error.message}")
             }
         })
     }
-    private fun getPostImage() {
-        val postRef =
-            FirebaseDatabase.getInstance()
-                .reference.child("Posts")
-                .child(postId!!).child("postimage")
-        postRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(pO: DataSnapshot) {
-                if (pO.exists()) {
-                    val image = pO.value.toString()
-                    Log.d("YourTag", "User Data: $image")
-                    if (image != null) {
-                        Picasso.get().load(image).placeholder(R.drawable.user).into(post_image_comment)
 
+    private fun getPostDetails() {
+        val postRef = FirebaseDatabase.getInstance().reference.child("Posts").child(postId)
+        postRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val post = snapshot.getValue(Post::class.java)
+                    if (post != null) {
+                        // แก้ไขส่วน description
+                        postTextView?.apply {
+                            text = post.description ?: "" // ถ้า null ให้ใช้ empty string
+                            visibility = if (post.description.isNullOrBlank()) View.GONE else View.VISIBLE
+                        }
+
+                        // ส่วนจัดการรูปภาพ
+                        post.postImages?.let { imageUrls ->
+                            if (imageUrls.isNotEmpty()) {
+                                postImagesRecyclerView?.visibility = View.VISIBLE
+                                postImagesAdapter = PostImagesAdapter(this@CommentsActivity, imageUrls)
+                                postImagesRecyclerView?.adapter = postImagesAdapter
+                                val layoutManager = LinearLayoutManager(
+                                    this@CommentsActivity,
+                                    LinearLayoutManager.HORIZONTAL,
+                                    false
+                                )
+                                postImagesRecyclerView?.layoutManager = layoutManager
+
+                                imageIndicator?.apply {
+                                    visibility = if (imageUrls.size > 1) View.VISIBLE else View.GONE
+                                    text = "1/${imageUrls.size}"
+                                }
+
+                                postImagesRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                                        super.onScrolled(recyclerView, dx, dy)
+                                        val visiblePosition = layoutManager.findFirstVisibleItemPosition()
+                                        if (visiblePosition != -1) {
+                                            imageIndicator?.text = "${visiblePosition + 1}/${imageUrls.size}"
+                                        }
+                                    }
+                                })
+                            } else {
+                                postImagesRecyclerView?.visibility = View.GONE
+                                imageIndicator?.visibility = View.GONE
+                            }
+                        }
+
+                        // ส่วนข้อมูลผู้โพสต์
+                        if (!post.publisher.isNullOrBlank()) {
+                            FirebaseDatabase.getInstance().reference.child("Users").child(post.publisher)
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(userSnapshot: DataSnapshot) {
+                                        if (userSnapshot.exists()) {
+                                            val user = userSnapshot.getValue(User::class.java)
+                                            if (user != null) {
+                                                userNameTextView?.text = user.getUsername()
+                                                Picasso.get().load(user.getImage()).placeholder(R.drawable.user).into(profileImageView)
+
+                                                // เพิ่มการคลิกไปยังโปรไฟล์สำหรับทั้งรูปและชื่อ
+                                                val profileClickListener = View.OnClickListener {
+                                                    showProfileFragment(post.publisher)
+                                                }
+                                                profileImageView?.setOnClickListener(profileClickListener)
+                                                userNameTextView?.setOnClickListener(profileClickListener)
+                                            }
+                                        }
+                                    }
+                                    override fun onCancelled(error: DatabaseError) {
+                                        Log.e("CommentsActivity", "Failed to load publisher info: ${error.message}")
+                                    }
+                                })
+                        }
+
+                        if (post.dateTime != 0L) {
+                            postTimeTextView?.text = post.getTimeAgo()
+                        }
                     } else {
-                        Log.e("YourTag", "User object is null")
+                        Log.e("CommentsActivity", "Failed to parse post data for postId: $postId")
                     }
                 } else {
-                    Log.e("YourTag", "DataSnapshot is null or does not exist")
+                    Log.e("CommentsActivity", "Post not found for postId: $postId")
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle onCancelled event if needed
+                Log.e("CommentsActivity", "Failed to load post details: ${error.message}")
             }
         })
     }
-    fun init(){
-        add_comment = findViewById(R.id.add_comment)
-        post_image_comment = findViewById(R.id.post_image_comment)
-        profile_image_comment = findViewById(R.id.profile_image_comment)
-        post_comment = findViewById(R.id.post_comment)
 
-
-    }
-    private fun  readComments(){
-        val commentsRef = FirebaseDatabase.getInstance()
-            .reference.child("Comments")
-            .child(postId)
-
-        commentsRef.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(pO: DataSnapshot) {
-                if (pO.exists())
-                {
-                    commmentList!!.clear()
-                    for (snapshot in pO.children)
-                    {
-                        val comment = snapshot.getValue(Comment::class.java)
-                        commmentList!!.add(comment!!)
+    private fun readComments() {
+        val commentsRef = FirebaseDatabase.getInstance().reference.child("Comments").child(postId)
+        commentsRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    commentList!!.clear()
+                    for (commentSnapshot in snapshot.children) {
+                        val comment = commentSnapshot.getValue(Comment::class.java)
+                        comment?.let { commentList!!.add(it) }
                     }
                     commentAdapter!!.notifyDataSetChanged()
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                Log.e("CommentsActivity", "Failed to read comments: ${error.message}")
             }
         })
     }
 
-    private fun addNotification(){
+    private fun addNotification(timestamp: Long) {
         val notiRef = FirebaseDatabase.getInstance().reference
             .child("Notifications")
-            .child(publisherId!!)
+            .child(publisherId)
 
         val notiMap = HashMap<String, Any>()
         notiMap["userid"] = firebaseUser!!.uid
-        notiMap["text"] = "commented: " + add_comment!!.text.toString()
-        notiMap["postid"]= postId
+        notiMap["text"] = "commented: " + addCommentEditText!!.text.toString()
+        notiMap["postid"] = postId
         notiMap["ispost"] = true
+        notiMap["timestamp"] = timestamp
+        notiMap["isRead"] = false
 
         notiRef.push().setValue(notiMap)
     }
 
+    fun showProfileFragment(profileId: String) {
+        // ซ่อนเนื้อหาเดิมทั้งหมด
+        findViewById<View>(R.id.app_bar_layout_comments)?.visibility = View.GONE
+        findViewById<View>(R.id.post_container)?.visibility = View.GONE
+        findViewById<View>(R.id.comments_recycler)?.visibility = View.GONE
+        findViewById<View>(R.id.commentRelative)?.visibility = View.GONE
+
+        // แสดง fragment_container
+        findViewById<View>(R.id.fragment_container)?.visibility = View.VISIBLE
+
+        val fragment = ProfileFragment().apply {
+            arguments = Bundle().apply {
+                putString("profileId", profileId)
+            }
+        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit() // ไม่ต้อง addToBackStack เพราะ CommentsActivity ไม่จัดการ back stack
+    }
 }

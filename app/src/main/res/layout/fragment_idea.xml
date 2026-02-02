@@ -4,238 +4,228 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
 
     tools:context=".Fragments.IdeaFragment">
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/brownn"
-        android:padding="10dp"
-        android:id="@+id/toolbar"
-        tools:ignore="MissingConstraints">
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="เรื่องน่ารู้"
-            android:textColor="@color/white"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-
-    </RelativeLayout>
-    <ImageView
-        android:id="@+id/search_txt"
-        android:layout_width="303dp"
-        android:layout_height="48dp"
+    <EditText
+        android:id="@+id/search"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="4dp"
         android:background="@drawable/searchview"
         android:ems="10"
-        android:fontFamily="@font/jsfront"
+        android:focusable="false"
+        android:fontFamily="@font/thaifontsemibold"
+        android:hint="Search"
         android:inputType="none"
         android:paddingStart="50dp"
-        android:paddingEnd="50dp"
-        android:textColorHint="#D8AC9283"
-        android:textSize="25sp"
+        android:paddingEnd="25dp"
+        android:textColorHint="#5C000000"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.592"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.12" />
+        app:layout_constraintVertical_bias="0.129" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/jsfront"
-        android:inputType="none"
-        android:paddingLeft="5dp"
-        android:text="Search"
-        android:textColor="@color/brown"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="@+id/search_txt"
-        app:layout_constraintEnd_toEndOf="@+id/search_txt"
-        app:layout_constraintHorizontal_bias="0.046"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/search_txt"
-        app:layout_constraintVertical_bias="0.473" />
+
+
+    <ImageView
+        android:id="@+id/serch_bar"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/search"
+        app:layout_constraintBottom_toBottomOf="@+id/search"
+        app:layout_constraintEnd_toEndOf="@+id/search"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/search"
+        app:layout_constraintTop_toTopOf="@+id/search"
+        app:layout_constraintVertical_bias="0.125"  />
 
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
-        android:layout_width="414dp"
-        android:layout_height="157dp"
-        android:contentDescription="@string/app_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_txt"
-        app:layout_constraintVertical_bias="0.058">
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.0">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="135dp"
             android:orientation="vertical"
-            android:paddingLeft="30dp"
+            android:paddingLeft="20dp"
             android:paddingRight="20dp">
 
             <ImageView
-                android:id="@+id/health"
-                style="@style/my_Style"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:id="@+id/dogCare"
+                style="@style/my_style"
                 android:background="@drawable/catagory_cart"
-                app:srcCompat="@drawable/health" />
+                android:src="@drawable/petcare" />
 
             <TextView
-                android:id="@+id/textView2"
-                android:layout_width="113dp"
+                android:id="@+id/dogCaretxt"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/health"
-                android:layout_alignStart="@id/health"
-                android:layout_alignEnd="@id/health"
-                android:layout_marginStart="1dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="-36dp"
-                android:layout_marginBottom="-23dp"
-                android:fontFamily="@font/jsfront"
-                android:text="โรงพยาบาล"
-                android:textColor="@color/brow_light"
-                android:textSize="26sp" />
-
-            <ImageView
-                android:id="@+id/care"
-                style="@style/my_Style"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="20dp"
-                android:layout_toEndOf="@+id/health"
-                android:background="@drawable/catagory_cart"
-                app:srcCompat="@drawable/carepet" />
-
-
-            <TextView
-
-                android:layout_width="58dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/care"
-                android:layout_alignStart="@id/care"
-                android:layout_alignEnd="@id/care"
-                android:layout_marginStart="9dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="-23dp"
-                android:fontFamily="@font/jsfront"
+                android:layout_below="@+id/dogCare"
+                android:layout_alignStart="@+id/dogCare"
+                android:layout_alignEnd="@+id/dogCare"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/thaifontsemibold"
                 android:text="การดูแล"
-                android:textColor="@color/brow_light"
-                android:textSize="26sp" />
+                android:textColor="@color/black"
+                android:textSize="15dp" />
 
             <ImageView
                 android:id="@+id/food"
-                style="@style/my_Style"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="20dp"
-                android:layout_toEndOf="@+id/care"
+                style="@style/my_style"
+                android:layout_marginStart="17dp"
+                android:layout_toEndOf="@+id/dogCare"
                 android:background="@drawable/catagory_cart"
-                app:srcCompat="@drawable/food" />
-
+                android:src="@drawable/petfood" />
 
             <TextView
-
-                android:layout_width="49dp"
+                android:id="@+id/food_txt"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/food"
-                android:layout_alignStart="@id/food"
-                android:layout_alignEnd="@id/food"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="11dp"
+                android:layout_below="@+id/food"
+                android:layout_alignStart="@+id/food"
+                android:layout_alignEnd="@+id/food"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="19dp"
                 android:layout_marginBottom="-23dp"
-                android:fontFamily="@font/jsfront"
+                android:fontFamily="@font/thaifontsemibold"
+                android:gravity="center"
                 android:text="อาหาร"
-                android:textColor="@color/brow_light"
-                android:textSize="26sp" />
+                android:textColor="@color/black"
+                android:textSize="15dp" />
 
             <ImageView
-                android:id="@+id/life_style"
-                style="@style/my_Style"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="20dp"
+                android:id="@+id/lifeStyle"
+                style="@style/my_style"
+                android:layout_marginStart="17dp"
                 android:layout_toEndOf="@+id/food"
                 android:background="@drawable/catagory_cart"
-                app:srcCompat="@drawable/life_style" />
+                android:src="@drawable/playing2" />
 
             <TextView
-
-                android:layout_width="72dp"
+                android:id="@+id/lifeStyle_txt"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/life_style"
-                android:layout_alignStart="@id/life_style"
-                android:layout_alignEnd="@id/life_style"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="1dp"
+                android:layout_below="@+id/lifeStyle"
+                android:layout_alignStart="@+id/lifeStyle"
+                android:layout_alignEnd="@+id/lifeStyle"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="-23dp"
-                android:fontFamily="@font/jsfront"
+                android:fontFamily="@font/thaifontsemibold"
+                android:gravity="center"
                 android:text="ไลฟ์สไตล์"
-                android:textColor="@color/brow_light"
-                android:textSize="26sp" />
+                android:textColor="@color/black"
+                android:textSize="15dp" />
+
+            <ImageView
+                android:id="@+id/hospital"
+                style="@style/my_style"
+                android:layout_marginStart="17dp"
+                android:layout_toEndOf="@+id/lifeStyle"
+                android:background="@drawable/catagory_cart"
+                android:src="@drawable/veterinary" />
+
+            <TextView
+                android:id="@+id/hospital_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/hospital"
+                android:layout_alignStart="@+id/hospital"
+                android:layout_alignEnd="@+id/hospital"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="-23dp"
+                android:fontFamily="@font/thaifontsemibold"
+                android:gravity="center"
+                android:text="โรงพยาบาล"
+                android:textColor="@color/black"
+                android:textSize="15dp" />
+
         </RelativeLayout>
-
-
     </HorizontalScrollView>
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="313dp"
-        android:layout_marginBottom="372dp"
-        android:fontFamily="@font/jsfront"
-        android:text="รายการยอดฮิต"
-        android:textColor="@color/brow_light"
-        android:textSize="24sp"
+        android:fontFamily="@font/thaibold"
+        android:text="Categories"
+        android:textColor="@color/color7"
+        android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.238"
+        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search"
+        app:layout_constraintVertical_bias="0.032" />
+
+    <TextView
+        android:id="@+id/dataList_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/thaibold"
+        android:text="Total information"
+        android:textColor="@color/color7"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.053"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
         app:layout_constraintVertical_bias="0.0" />
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="23dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:padding="2dp"
-        app:layout_constraintBottom_toBottomOf="@+id/search_txt"
-        app:layout_constraintEnd_toEndOf="@+id/search_txt"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/search_txt"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.855"
-        app:srcCompat="@drawable/searchs" />
-
-
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_recommend"
+        android:id="@+id/rv_data"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        tools:listitem="@layout/reccomend_rv_item"/>
+        app:layout_constraintTop_toBottomOf="@+id/dataList_txt"
+        app:layout_constraintVertical_bias="0.0"
+        tools:listitem="@layout/data_rv_item"
+        />
+
+    <TextView
+        android:id="@+id/hello"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="@font/thaibold"
+        android:text="Hello Petty!"
+        android:textColor="@color/color7"
+        android:textSize="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.023"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.854" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
